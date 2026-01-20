@@ -4,10 +4,12 @@
 flowchart TD
 start((start)):::terminator
 Solver(apply solver):::process
-start --> Collect(collect config vars)
+start --> Collect(collect config vars):::process
 Collect --> Config[/config vars/]
-Config --> Scene("create scene (singletone)"):::process
-Scene --> Fac{is PERFECT?}
+Config --> Singleton{scene?}
+Singleton -->|no|Scene("create scene (singleton)"):::process
+Singleton -->|yes|Fac{perfect?}
+Scene --> Fac
 subgraph Factory
 Fac --> |no|SimMaze(create simple maze):::process
 Fac --> |yes|PerMaze(create perfect maze):::process
@@ -15,7 +17,7 @@ end
 SimMaze --> Solver
 PerMaze --> Solver
 Solver --> Restart{restart again?}
-Destroy --> Fac
+Destroy --> Collect
 Restart --> |yes|Destroy(destroy scene members):::process
 Restart -->|no|finish((end)):::terminator
 classDef terminator fill:#f00, color:#fff 
