@@ -31,12 +31,12 @@ Singleton -->|yes|Fac{perfect?}
 Fac --> |no|SimMaze(create simple maze):::process
 Fac --> |yes|PerMaze(create perfect maze):::process
 end
-SimMaze --> HexTrans
-PerMaze --> HexTrans
+SimMaze --> ShortDist
+PerMaze --> ShortDist
 subgraph Solver
-HexTrans --> ShortDist
+ShortDist --> HexTrans
 end
-ShortDist --> Restart{restart again?}
+HexTrans --> Restart{restart again?}
 subgraph Destructors
 Destroy
 DestroyAll(destroy all):::process
