@@ -2,11 +2,25 @@
 
 ```mermaid
 flowchart TD
+subgraph ErrorHandler
+	errorhandlers
+end
+subgraph Testers
+	testers
+end
+Virt(virtualization) -.-> start
+start -.-> ErrorHandler -.-> Testers -.-> finish
 start((start)):::terminator
 HexTrans(translate maze):::process
 ShortDist(apply solver):::process
-start --> Collect(collect config vars):::process
+subgraph LauncherEpic
+	Launcher
+end
+start --> Launcher(launcher):::process
+Launcher --> Collect(collect config vars):::process
+subgraph DataColl
 Collect --> Config[/config vars/]
+end
 Config --> Singleton{scene?}
 subgraph Singl
 Singleton -->|no|Scene("create scene (singleton)"):::process
@@ -23,9 +37,14 @@ subgraph Solver
 HexTrans --> ShortDist
 end
 ShortDist --> Restart{restart again?}
+subgraph Destructors
+Destroy
+DestroyAll(destroy all):::process
+end
 Destroy --> Collect
 Restart --> |yes|Destroy(destroy scene members):::process
-Restart -->|no|finish((end)):::terminator
+Restart --> |no|DestroyAll
+DestroyAll --> finish((end)):::terminator
 classDef terminator fill:#f00, color:#fff 
 classDef process fill:green, color:#fff
 ```
