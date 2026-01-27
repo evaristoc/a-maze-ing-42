@@ -1,0 +1,7 @@
+# vagrants
+./vagrant
+Vagrantfile
+ubuntu-*.log
+
+# vscode
+.vscode
