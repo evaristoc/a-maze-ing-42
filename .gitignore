@@ -1,1 +1,15 @@
+# envs
+.env
+
+# vagrants
+.vagrant/
+Vagrantfile
+ubuntu-*.log
+
+# vscode
 .vscode
+
+# keys
+*.private_key
+id_rsa
+id_ed25519
