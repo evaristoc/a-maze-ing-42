@@ -1,2 +1,6 @@
 .venv
 .env
+
+# external libs
+# minilibx
+mlx_CLXV/
