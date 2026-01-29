@@ -9,8 +9,8 @@ PIP = $(VENV)/bin/pip
 setup:
 	@test -d $(VENV) || (echo "Creating .venv..." && python3 -m venv $(VENV))
 	@$(PIP) install --upgrade pip
-	@chmod +x setup.sh
-	./setup.sh
+	@chmod +x install_minilibx.sh
+	./install_minilibx.sh
 	@echo "Handshake complete. Dependencies are synced."
 
 # 2. The 'sync' command: Use this when a teammate pulls an updated pyproject.toml
