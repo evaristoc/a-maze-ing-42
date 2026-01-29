@@ -7,7 +7,7 @@ name = "a-maze-ing"
 version = "0.1.0"
 description = "A-maze-ing Lib"
 readme = "README.md"
-authors = [@ecarabal, @swester]
+authors = [{name = "@ecarabal"}, {name = "@swester"}]
 requires-python = ">=3.10"
 dependencies = [
     # Add standard team dependencies here, for example:

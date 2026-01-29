@@ -9,7 +9,6 @@ PIP = $(VENV)/bin/pip
 setup:
 	@test -d $(VENV) || (echo "Creating .venv..." && python3 -m venv $(VENV))
 	@$(PIP) install --upgrade pip
-# 	@$(PIP) install -e .
 	@chmod +x setup.sh
 	./setup.sh
 	@echo "Handshake complete. Dependencies are synced."
