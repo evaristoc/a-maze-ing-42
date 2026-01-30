@@ -23,7 +23,7 @@ fi
 
 if [ "$CURRENT_WHEEL" != "$TARGET_WHEEL_PATH" ]; then
     echo "Renaming $(basename "$CURRENT_WHEEL") to $TARGET_WHEEL"
-    mv "$CURRENT_WHEEL" "$TARGET_WHEEL_PATH"
+    cp "$CURRENT_WHEEL" "$TARGET_WHEEL_PATH"
 fi
 
 # 3. Install MiniLibX wheel
