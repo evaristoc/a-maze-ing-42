@@ -4,3 +4,6 @@
 # external libs
 # minilibx
 mlx_CLXV/
+
+#log files
+*.egg-info/
