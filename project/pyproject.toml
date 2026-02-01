@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -12,6 +12,9 @@ requires-python = ">=3.10"
 dependencies = [
     # Add standard team dependencies here, for example:
     # "numpy>=1.21.0",
+    "pytest",
+    "mypy",
+    "flake8",
 ]
 
 [tool.setuptools.packages.find]

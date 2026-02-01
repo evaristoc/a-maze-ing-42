@@ -1,0 +1,9 @@
+.venv
+.env
+
+# external libs
+# minilibx
+mlx_CLXV/
+
+#log files
+*.egg-info/

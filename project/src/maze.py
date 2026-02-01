@@ -1,0 +1,1 @@
+# contains MazeGenerator class
