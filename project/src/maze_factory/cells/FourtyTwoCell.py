@@ -7,8 +7,8 @@ class FourtyTwoCell(Cell):
     Fully enclosed, unwalkable, unique.
     """
 
-    def __init__(self, x: int, y: int):
-        super().__init__(x, y, 0b1111)
+    def __init__(self, cell_position_x: int, cell_position_y: int):
+        super().__init__(cell_position_x, cell_position_y, 0b1111)
 
     def is_walkable(self) -> bool:
         return False

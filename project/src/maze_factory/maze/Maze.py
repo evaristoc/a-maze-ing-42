@@ -159,22 +159,22 @@ class Maze(ABC):
         x_exit, y_exit = exit_coords
 
         if self.is_position_inside_maze_bounds(x_entry, y_entry):
-            self.two_dimensional_cell_grid[x_entry][y_entry] = (EntryCell
+            self.two_dimensional_cell_grid[y_entry][x_entry] = (EntryCell
                                                                 (x_entry,
                                                                  y_entry))
             self.remove_wall_between_two_adjacent_cells(
-                self.two_dimensional_cell_grid[x_entry]
-                                              [y_entry],
+                self.two_dimensional_cell_grid[y_entry]
+                                              [x_entry],
                 self.get_cell_at_position(x_entry, y_entry + 1)
                 )
 
         if self.is_position_inside_maze_bounds(x_exit, y_exit):
-            self.two_dimensional_cell_grid[x_exit][y_exit] = (ExitCell
+            self.two_dimensional_cell_grid[y_exit][x_exit] = (ExitCell
                                                               (x_exit,
                                                                y_exit))
             self.remove_wall_between_two_adjacent_cells(
-                self.two_dimensional_cell_grid[x_exit]
-                                              [y_exit],
+                self.two_dimensional_cell_grid[y_exit]
+                                              [x_exit],
                 self.get_cell_at_position(x_exit - 1, y_exit)
                 )
 
