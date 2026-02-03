@@ -10,6 +10,9 @@ class FourtyTwoCell(Cell):
     def __init__(self, cell_position_x: int, cell_position_y: int):
         super().__init__(cell_position_x, cell_position_y, 0b1111)
 
+    def __repr__(self):
+        return f"FOURTYTWO({self.cell_position_x}, {self.cell_position_y})"
+
     def is_walkable(self) -> bool:
         return False
 

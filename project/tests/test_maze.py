@@ -41,6 +41,9 @@ def main() -> None:
                                   )
 
     print("\nASCII Maze Representation:\n")
+    for column in maze.two_dimensional_cell_grid:
+        for cell in column:
+            print(cell)
     maze.print_maze_to_stdout()
 
 

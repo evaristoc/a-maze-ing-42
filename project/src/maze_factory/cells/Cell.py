@@ -24,7 +24,7 @@ class Cell:
         self.wall_render_color = 0xFFFFFF
 
     def __repr__(self):
-        return self.cell_position_x, self.cell_position_y
+        return f"({self.cell_position_x}, {self.cell_position_y})"
 
     # ───────────── Wall inspection ─────────────
 

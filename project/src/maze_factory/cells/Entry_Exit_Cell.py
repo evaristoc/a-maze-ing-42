@@ -11,7 +11,7 @@ class EntryCell(Cell):
         super().__init__(cell_position_x, cell_position_y, 0b1111)
 
     def __repr__(self):
-        return f"{self.cell_position_x}, {self.cell_position_y}"
+        return f"ENTRY({self.cell_position_x}, {self.cell_position_y})"
 
     def is_special_cell(self):
         return True
@@ -27,7 +27,7 @@ class ExitCell(Cell):
         super().__init__(cell_position_x, cell_position_y, 0b1111)
 
     def __repr__(self):
-        return f"{self.cell_position_x}, {self.cell_position_y}"
+        return f"EXIT({self.cell_position_x}, {self.cell_position_y})"
 
     def is_special_cell(self):
         return True

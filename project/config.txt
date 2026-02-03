@@ -5,8 +5,8 @@
 # OUTPUT_FILE is the name of where the maze will log it's output.
 # PERFECT is a boolean, representing if the maze will have only one possible solution (True) or more possible solutions (False).
 
-WIDTH=50
-HEIGHT=50
+WIDTH=19
+HEIGHT=19
 ENTRY=0,3
 EXIT=2,1
 OUTPUT_FILE=map_output.txt
