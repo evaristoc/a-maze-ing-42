@@ -1,0 +1,17 @@
+# WIDTH represents the amount of squares from left to right.
+# HEIGHT represents the amount of squares from top to bottom.
+# ENTRY represents the coordinate for the start point for our maze.
+# EXIT represents the coordinate where the "player" needs to go to solve the maze.
+# OUTPUT_FILE is the name of where the maze will log it's output.
+# PERFECT is a boolean, representing if the maze will have only one possible solution (True) or more possible solutions (False).
+
+WIDTH=21
+HEIGHT=21
+ENTRY=0,3
+EXIT=17,0
+OUTPUT_FILE=map_output.txt
+PERFECT=FALSE
+
+MUSIC_FILE=TRUE
+COLOR_WALLS=RED
+COLOR_BACKGROUND=BLACK
