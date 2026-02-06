@@ -31,6 +31,20 @@ class MazeRenderer(XVar):
         self._mlx_ptr = self._mlx.mlx.mlx_init() 
         self._cell_size = cell_size
 
+# pixel_step = bpp // 8
+
+# for y in range(height):
+#     for x in range(width):
+#         # The Handshake Formula
+#         offset = (y * sl) + (x * pixel_step)
+        
+#         # Writing bytes manually to the memory buffer
+#         # Using Little Endian: Blue, Green, Red, Alpha
+#         data[offset] = (color & 0xFF)          # Blue
+#         data[offset + 1] = (color >> 8) & 0xFF # Green
+#         data[offset + 2] = (color >> 16) & 0xFF# Red
+#         data[offset + 3] = 0                   # Alpha
+
 
     
 
