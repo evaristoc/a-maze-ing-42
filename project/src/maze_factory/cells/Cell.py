@@ -24,7 +24,9 @@ class Cell:
         self.wall_render_color = 0xFFFFFF
 
     def __repr__(self):
-        return f"({self.cell_position_x}, {self.cell_position_y})"
+        return (f"({self.cell_position_x},"
+                f"{self.cell_position_y})"
+                f"{bin(self.wall_bitmask_binary)}")
 
     # ───────────── Wall inspection ─────────────
 
@@ -39,6 +41,21 @@ class Cell:
 
     def has_west_wall(self) -> bool:
         return bool(self.wall_bitmask_binary & 0b1000)
+
+    def has_wall(self, direction: str) -> bool:
+        try:
+            if direction == "north":
+                return self.has_north_wall()
+            if direction == "east":
+                return self.has_east_wall()
+            if direction == "south":
+                return self.has_south_wall()
+            if direction == "west":
+                return self.has_west_wall()
+            else:
+                raise ValueError("direction is not valid.")
+        except ValueError as e:
+            print(f"Error: {e}")
 
     # ───────────── Wall mutation (Maze-controlled) ─────────────
 

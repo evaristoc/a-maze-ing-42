@@ -13,7 +13,10 @@ from .maze_path_generators import (MazePathGenerator,
                                    SimpleMazeGenerator,
                                    PerfectMazeDFSGenerator)
 
+from .maze_solvers import (MazeSolver, SinglePathSolver, AllPathsSolver)
+
 __all__ = ["ConfigParser", "ConfigError", "write_hexadecimal_map_to_file",
            "Cell", "FourtyTwoCell", "EntryCell", "ExitCell", "Maze",
            "MazePathGenerator", "SimpleMazeGenerator",
-           "PerfectMazeDFSGenerator"]
+           "PerfectMazeDFSGenerator",
+           "MazeSolver", "SinglePathSolver", "AllPathsSolver"]

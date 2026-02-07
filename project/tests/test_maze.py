@@ -1,5 +1,6 @@
 from tests import Maze, ConfigError, ConfigParser
 from tests import write_hexadecimal_map_to_file
+from tests import SinglePathSolver
 import sys
 
 # Pick a seed, just a random number, fill in the config file in project.
@@ -34,16 +35,21 @@ def main() -> None:
         maze.generate_simple_maze()
 
     # maze.randomly_remove_some_walls(0.6)
+    perfect_solver = SinglePathSolver(maze)
+    solution = perfect_solver.solve()
+    # print(solution)
+    print("\nASCII Maze Representation:\n")
+    for path in solution:
+        maze.print_maze_to_stdout(path)
+        print(path)
 
     write_hexadecimal_map_to_file(maze, config["entry"], config["exit"],
                                   config["perfect"],
                                   config["output_file"]
                                   )
-
-    print("\nASCII Maze Representation:\n")
-    for column in maze.two_dimensional_cell_grid:
-        for cell in column:
-            print(cell)
+    # for column in maze.two_dimensional_cell_grid:
+    #     for cell in column:
+    #         print(cell)
     maze.print_maze_to_stdout()
 
 

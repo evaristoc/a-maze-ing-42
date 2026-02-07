@@ -159,6 +159,7 @@ class Maze(ABC):
         x_exit, y_exit = exit_coords
 
         if self.is_position_inside_maze_bounds(x_entry, y_entry):
+            self.maze_entry_cell = (EntryCell(x_entry, y_entry))
             self.two_dimensional_cell_grid[y_entry][x_entry] = (EntryCell
                                                                 (x_entry,
                                                                  y_entry))
@@ -172,6 +173,7 @@ class Maze(ABC):
             self.two_dimensional_cell_grid[y_exit][x_exit] = (ExitCell
                                                               (x_exit,
                                                                y_exit))
+            self.maze_exit_cell = (ExitCell(x_exit, y_exit))
             self.remove_wall_between_two_adjacent_cells(
                 self.two_dimensional_cell_grid[y_exit]
                                               [x_exit],
@@ -364,8 +366,10 @@ class Maze(ABC):
                 elif isinstance(cell, ExitCell):
                     print(EXIT, end="")
 
-                elif cell in solution:
-                    print(PATH, end="")
+                elif solution:
+                    for path_cell in solution:
+                        if cell == path_cell:
+                            print(PATH, end="")
 
                 else:
                     print(EMPTY_BLOCK, end="")
