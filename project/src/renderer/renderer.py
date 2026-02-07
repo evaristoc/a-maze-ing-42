@@ -6,10 +6,10 @@ import sys
 @dataclass
 class XVar:
     """Structure for main screen vars using dataclass"""
-    self._mlx = None
-    self._mlx_ptr = None
-    self._screen_w = 0
-    self._screen_h = 0
+    _mlx: any = None
+    _mlx_ptr: any = None
+    _screen_w: int = 0
+    _screen_h: int = 0
 
 
 class MlxContext():
@@ -34,25 +34,27 @@ class MlxContext():
         return self._mlx.get_screen_size(self._mlx_ptr)
 
 
-class XWindowVar:
-    """Structure for window vars"""
-    def __init__(self):        
-        self._win = None
-        self._img = ImgData()
-        self._imgidx = 0
+# class XWindowVar:
+#     """Structure for window vars"""
+#     def __init__(self):   
+#         self._win = None
+#         # self._img = ImgData()
+#         # self._imgidx = 0
 
 
-class Window(XWindowVar):
-    def __init__(self, s: Screen, w: int, h: int, title: str) -> None:
-        super().__init__()        
-        self.engine = Screen()
-        try:
-            self._win = self.engine.mlx_new_window(self.engine.mlx_ptr, w, h, title)
-            if not self._win:
-                raise Exception(f"Can't create {title} window")
-        except Exception as e:
-            print(f"Error: Win create: {e}", file=sys.stderr)
-            sys.exit(1)
+# class Window(XWindowVar):
+#     def __init__(self, s: Screen, w: int, h: int, title: str) -> None:
+#         XWindowVar.__init__(self)        
+#         self.screen = Screen()
+#         try:
+#             self._win = self.screen.mlx_new_window(self.screen.mlx_ptr, w, h, title)
+#             if not self._win:
+#                 raise Exception(f"Can't create {title} window")
+#         except Exception as e:
+#             print(f"Error: Win create: {e}", file=sys.stderr)
+#             sys.exit(1)
+#         self.main_buffer = Image(w, h)
+    
 
 class Image(ABC):
     @abstractmethod
@@ -69,15 +71,64 @@ class MlxImageBuffer(Image):
         self._img = mlx.mlx_new_image(mlx_ptr, w, h)
         self._data, self._bpp, self._sl, self._endian = \
             mlx.mlx_get_data_addr(self._img)
-
-    def put_pixel(self, x: int, y: int, color: int):
-        offset = y * self._sl + x * (self._bpp // 8)
-        self._data[offset:offset+4] = color.to_bytes(4, "little")
-
-    def present(self):
-        self._mlx.mlx_put_image_to_window(
-            self._mlx_ptr, self._win, self._img, 0, 0
+    ## for buffering a single, modifiable image
+    def render(self):
+        self.screen.mlx_ptr.mlx_put_to_window(
+            self.screen.mlx_ptr,
+            self.win,
+            self.main_buffer.img_ptr,
+            0,
+            0
         )
+
+    ## for different, separated images
+    # def render(self, image_obj, x, y):
+    #     self.screen.mlx_ptr.mlx_put_to_window(
+    #         self.screen.mlx_ptr,
+    #         self.win,
+    #         image_obj.img_ptr,
+    #         x,
+    #         y
+    #     )
+
+# @dataclass
+# class ImgData:
+#     """Structure for image data"""
+#     img_ptr: any = None
+#     addr: any = None
+#     width: int = 0
+#     height: int = 0
+#     data: int = None
+#     sl: int = 0  # size line
+#     bpp: int = 0  # bits per pixel
+#     edian: int = 0
+
+# class Image(ImgData):
+#     def __init__(self, w: int, h: int) -> None:
+#         super().__init__(self)
+#         self.screen = Screen()
+#         self.width = w
+#         self.height = h
+#         self.img_ptr = self.screen.mlx_ptr.mlx_new_image(
+#             self.screen.mlx_ptr,
+#             self.width,
+#             self.height
+#         )
+#         self.addr = self.screen._mlx.mlx_get_data_addr(
+#             self.img_ptr,
+#             self.bbp,
+#             self.sl,
+#             self.edian
+#         )
+
+#     def put_pixel(self, x: int, y: int, color: int):
+#         offset = y * self._sl + x * (self._bpp // 8)
+#         self._data[offset:offset+4] = color.to_bytes(4, "little")
+
+#     def present(self):
+#         self._mlx.mlx_put_image_to_window(
+#             self._mlx_ptr, self._win, self._img, 0, 0
+#         )
 
 class Renderer:
     """Abstract/generic renderer: only knows ImageBuffer"""
