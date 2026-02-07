@@ -16,17 +16,14 @@ class MlxContext():
             print(f"Error: Can't initialize MLX: {e}", file=sys.stderr)
             sys.exit(1)
 
-    @property
-    def mlx_ptr(self) -> any:
+    def get_mlx_ptr(self) -> any:
         return self.mlx_ptr
 
-    @property
-    def size(self) -> tuple:
+    def get_size(self) -> tuple:
         return self.mlx.get_screen_size(self.mlx_ptr)
 
-    def new_window(self, w: int, h: int, title: str) -> any:
-        return self.mx.mlx_new_window(self.mlx_ptr, w, h, title)
-
+    def create_new_canvas(self, w: int, h: int, title: str) -> any:
+        return self.mlx.mlx_new_window(self.mlx_ptr, w, h, title)
 
 # class XWindowVar:
 #     """Structure for window vars"""
@@ -40,7 +37,7 @@ class Canvas():
     def __init__(self, context: MlxContext, w: int, h: int, title: str) -> None:
         self.context = context
         try:
-            self._win = self.context.new_window(w, h, title)
+            self._win = self.context.create_new_canvas(w, h, title)
             if not self._win:
                 raise Exception(f"Can't create {title} window")
         except Exception as e:
@@ -50,8 +47,8 @@ class Canvas():
 
     ## for buffering a single, modifiable image
     def present(self) -> None:
-        self.context.mlx_ptr.mlx_put_to_window(
-            self.context.mlx_ptr,
+        self.context.mlx.mlx_put_to_window(
+            self.context.mlx_ptr(),
             self._win,
             self.main_buffer.img_ptr,
             0,
@@ -68,43 +65,43 @@ class Image(ABC):
     width: int
     height: int
 
-    @property
-    @abstractmethod
-    def img_ptr(self):
-        """Backend image pointer (mlx image, texture handle, etc.)"""
-        pass
+#     @property
+#     @abstractmethod
+#     def img_ptr(self):
+#         """Backend image pointer (mlx image, texture handle, etc.)"""
+#         pass
 
-    @property
-    @abstractmethod
-    def data(self):
-        """Raw pixel buffer"""
-        pass
+#     @property
+#     @abstractmethod
+#     def data(self):
+#         """Raw pixel buffer"""
+#         pass
 
-    @property
-    @abstractmethod
-    def bytes_per_pixel(self) -> int:
-        pass
+#     @property
+#     @abstractmethod
+#     def bytes_per_pixel(self) -> int:
+#         pass
 
-    @property
-    @abstractmethod
-    def stride(self) -> int:
-        """Bytes per row (line size)"""
-        pass
+#     @property
+#     @abstractmethod
+#     def stride(self) -> int:
+#         """Bytes per row (line size)"""
+#         pass
 
-    @property
-    @abstractmethod
-    def endian(self) -> int:
-        pass
+#     @property
+#     @abstractmethod
+#     def endian(self) -> int:
+#         pass
 
-    @property
-    @abstractmethod
-    def width(self) -> int:
-        pass
+#     @property
+#     @abstractmethod
+#     def width(self) -> int:
+#         pass
 
-    @property
-    @abstractmethod
-    def height(self) -> int:
-        pass
+#     @property
+#     @abstractmethod
+#     def height(self) -> int:
+#         pass
 
     @abstractmethod
     def put_pixel(self, x: int, y: int, color: int) -> None:
@@ -136,11 +133,16 @@ class Image(ABC):
 
 
 class MlxImageBuffer(Image):
-    def __init__(self, mlx: any, mlx_ptr: any, win, w: int, h: int) -> None:
-        self._mlx = mlx
-        self._img = mlx.mlx_new_image(mlx_ptr, w, h)
+    def __init__(self, context: any, w: int, h: int) -> None:
+        self.context = context
+        self._img = self._create_new_img(w, h)
+        #self._img = canvas.context.mlx_new_image(self._context.mlx_ptr(), w, h)
         self._data, self._bpp, self._sl, self._endian = \
-            mlx.mlx_get_data_addr(self._img)
+            self.context.mlx.mlx_get_data_addr(self._img)
+    
+    def _create_new_img(self, w: int, h: int) -> None:
+        #print(self.context)
+        return self.context.mlx.mlx_new_image(self.context.get_mlx_ptr(), w, h)
     ## for different, separated images
     # def render(self, image_obj, x, y):
     #     self.screen.mlx_ptr.mlx_put_to_window(
@@ -151,33 +153,33 @@ class MlxImageBuffer(Image):
     #         y
     #     )
 
-    @property
-    def img_ptr(self):
-        return self._img
+    # @property
+    # def img_ptr(self):
+    #     return self._img
 
-    @property
-    def data(self):
-        return self._data
+    # @property
+    # def data(self):
+    #     return self._data
 
-    @property
-    def bytes_per_pixel(self):
-        return self._bpp
+    # @property
+    # def bytes_per_pixel(self):
+    #     return self._bpp
 
-    @property
-    def stride(self):
-        return self._sl
+    # @property
+    # def stride(self):
+    #     return self._sl
 
-    @property
-    def endian(self):
-        return self._endian
+    # @property
+    # def endian(self):
+    #     return self._endian
 
-    @property
-    def width(self):
-        return self._width
+    # @property
+    # def width(self):
+    #     return self._width
 
-    @property
-    def height(self):
-        return self._height
+    # @property
+    # def height(self):
+    #     return self._height
     
     def put_pixel(self, x: int, y: int, color: int) -> None:
         if x < 0 or y < 0 or x >= self._width or y >= self._height:
@@ -211,7 +213,7 @@ class MazeRenderer(Renderer):
     def __init__(self, cell_size: int):
         self.cell = cell_size
 
-    def draw(self, target: any, state: any):
+    def draw(self, target: any, state: any) -> None:
         # """Draw a maze cell as a block of pixels"""
         # for dy in range(self.cell):
         #     for dx in range(self.cell):
