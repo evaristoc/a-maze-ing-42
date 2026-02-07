@@ -23,7 +23,7 @@ def main() -> None:
 
     maze_width = config["width"]
     maze_height = config["height"]
-    seed = 122
+    seed = 1221
 
     maze = Maze(maze_width, maze_height, seed)
 

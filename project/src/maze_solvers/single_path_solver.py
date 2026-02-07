@@ -29,12 +29,15 @@ class SinglePathSolver(MazeSolver):
                 # direction = opposite_direction[direction]
                 # print(current, neighbor, direction,
                 # current.has_wall(direction))
+                if neighbor.is_walkable() is not True:
+                    continue
                 if neighbor in visited:
                     continue
                 if neighbor is None:
                     continue
-                # if current.has_wall(direction):
-                #     continue
+                direction = opposite_direction[direction]
+                if neighbor.has_wall(direction):
+                    continue
 
                 visited.add(neighbor)
                 stack.append((neighbor, path + [neighbor]))

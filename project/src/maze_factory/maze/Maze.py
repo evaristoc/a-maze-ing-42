@@ -350,11 +350,10 @@ class Maze(ABC):
         for y in range(height):
 
             # Vertical walls + interior
+            print("|", end="")  # Left boundary
+
             for x in range(width):
                 cell = self.get_cell_at_position(x, y)
-
-                # West wall
-                print("|" if cell.has_west_wall() else " ", end="")
 
                 # Interior
                 if isinstance(cell, FourtyTwoCell):
@@ -366,16 +365,16 @@ class Maze(ABC):
                 elif isinstance(cell, ExitCell):
                     print(EXIT, end="")
 
-                elif solution:
-                    for path_cell in solution:
-                        if cell == path_cell:
-                            print(PATH, end="")
+                elif cell in solution:
+                    print(PATH, end="")
 
                 else:
                     print(EMPTY_BLOCK, end="")
 
-            # Rightmost boundary wall
-            print("|")
+                # East wall
+                print("|" if cell.has_east_wall() else " ", end="")
+
+            print()
 
             # Horizontal walls
             for x in range(width):
