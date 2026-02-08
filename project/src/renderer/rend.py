@@ -271,35 +271,34 @@ class MazeRenderer(Renderer):
         if "path" in elements:
             self._path(target_img, state, elements["path"])
     
-    def _entrance(self, target, cx: int, cy: int, color: int):
+    def _fortytwo(self, target, cx: int, cy: int, color: int):
         """
-        maze is a domain object (state because it might change):
-        - maze.width
-        - maze.height
-        - maze.cells[y][x] or equivalent
+        Draw all FortyTwo cells in the maze.
+        Each cell is 7x7 pixels:
+        - walls included
+        - interior: 3x3 pixels
+        - padding: 2px from top-left corner of cell
         """
-        # I need to translate incoming information into something that the graphical lib can read
-        # so first, let's get how large it must be. Let's get the h and w in number of cells
-        # I have to account for the number of walls: they are shared, so it means that some walls
-        # have a wall less because it was already painted
-        H = len(state) * self.cell_size
-        W = len(state[0]) * self_cell_size
+        cell_size = 7
+        interior_size = 3
         padding = 2
-        special_col_range = 3
 
-        #now, let's translate this pixels to be drawn 
-        # but first, let fill all the space with a background color
-        for cell_y in range(H):
-            for cell_x in range(W):
-                cell = state[cell_y][cell_x]
-                start_drawer_x = cell_x * self.cell_size
-                start_drawer_y = cell_y * self.cell_size
-                # Interior
-                if isinstance(cell, FourtyTwoCell):
-                    rang = padding + special_col
-                    for d_y in range(start_drawer_y + padding, start_drawer_y + rang):
-                        for d_x in range(start_drawer_x + padding, start_drawer_x + rang):
-                            target_img.put_pixel(d_x, d_y, 0x00222222)
+        # Iterate over all cells in the maze
+        for y, row in enumerate(state):
+            for x, cell in enumerate(row):
+                if not isinstance(cell, FourtyTwoCell):
+                    continue
+
+                # Calculate top-left corner of the cell in pixels
+                start_x = x * cell_size + padding
+                start_y = y * cell_size + padding
+
+                # Paint interior
+                for dy in range(interior_size):
+                    for dx in range(interior_size):
+                        px = start_x + dx
+                        py = start_y + dy
+                        target_img.put_pixel(px, py, color)
 
     def _draw_cell(self, target, cx: int, cy: int, color: int):
         px = cx * self.cell
