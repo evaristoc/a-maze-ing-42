@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+#from abc import ABC, abstractmethod
 #from dataclasses import dataclass
 import sys
 
@@ -267,7 +267,8 @@ class MazeRenderer(Renderer):
         if "exit" in elements:
             self._exit(target_img, state, elements["exit"])
         if "walls" in elements:
-            self._walls(target_img, state, elements["walls"])
+            self._walls(target_img, state, elements["walls"])  
+            self._border_walls(target_img, state, elements["walls"])       
         if "path" in elements:
             self._path(target_img, state, elements["path"])
     
@@ -300,18 +301,77 @@ class MazeRenderer(Renderer):
                         py = start_y + dy
                         target_img.put_pixel(px, py, color)
 
-    def _draw_cell(self, target, cx: int, cy: int, color: int):
-        px = cx * self.cell
-        py = cy * self.cell
+    def _walls(self, target_img, state, color):
+        for y, row in enumerate(state):
+            for x, cell in enumerate(row):
+                # cell = state.cells[y][x]
 
-        for dy in range(self.cell):
-            for dx in range(self.cell):
-                target.put_pixel(px + dx, py + dy, color)
+                base_x = x * 7
+                base_y = y * 7
 
-    def _cell_color(self, cell):
-        if cell.is_wall:
-            return 0x00FFFFFF
-        return 0x00000000
+                # South wall (horizontal)
+                if cell.has_south_wall():
+                    wall_y = base_y + 6
+                    for dx in range(7):
+                        target_img.put_pixel(base_x + dx, wall_y, color)
+
+                # East wall (vertical)
+                if cell.has_east_wall():
+                    wall_x = base_x + 6
+                    for dy in range(7):
+                        target_img.put_pixel(wall_x, base_y + dy, color)
+
+
+    def _border_walls(self, target_img, state, color):
+        # Top border
+        for x in range(state.width):
+            base_x = x * 7
+            for dx in range(7):
+                target_img.put_pixel(base_x + dx, 0, color)
+
+        # Left border
+        for y in range(state.height):
+            base_y = y * 7
+            for dy in range(7):
+                target_img.put_pixel(0, base_y + dy, color)
+
+    def _background(self, target_img, state, color):
+        cell_size = 7
+        height_in_cells = len(state)
+        width_in_cells = len(state[0])
+
+        H = height_in_cells * cell_size
+        W = width_in_cells * cell_size
+
+        for y in range(H):
+            for x in range(W):
+                target_img.put_pixel(x, y, color) 
+
+    # TODO finish the following functions
+    def _path():
+        pass
+
+    def _entrance():
+        pass
+
+    def _exit():
+        pass
+   
+
+
+
+    # def _draw_cell(self, target, cx: int, cy: int, color: int):
+    #     px = cx * self.cell
+    #     py = cy * self.cell
+
+    #     for dy in range(self.cell):
+    #         for dx in range(self.cell):
+    #             target.put_pixel(px + dx, py + dy, color)
+
+    # def _cell_color(self, cell):
+    #     if cell.is_wall:
+    #         return 0x00FFFFFF
+    #     return 0x00000000
 
 
 # class UIRenderer(Renderer):
