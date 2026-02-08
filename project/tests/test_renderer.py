@@ -38,14 +38,16 @@ def main() -> None:
     # maze.randomly_remove_some_walls(0.6)
     context = MlxContext(mlx.Mlx())
     print(context)
-
-    canvas = context.create_new_canvas(maze_width, maze_height, "maze")
+    cell_size = 7
+    canvas = context.create_new_canvas(maze_width*cell_size, maze_height*cell_size, "maze")
     print(canvas)
 
-    image = MlxImageBuffer(context, maze_width, maze_height)
+    #image = context.create_new_image(maze_width, maze_height)
+    image = conntext.create_new_image(MlxImageBuffer, maze_width*cell_size, maze_height*cell_size)
     print(image)
+    image.clear()
 
-    renderer = MazeRenderer(6)
+    renderer = MazeRenderer(cell_size)
     print(renderer)
 
     print(maze.two_dimensional_cell_grid)

@@ -25,12 +25,32 @@ class MlxContext():
     def create_new_canvas(self, w: int, h: int, title: str) -> any:
         return self.mlx.mlx_new_window(self.mlx_ptr, w, h, title)
 
-# class XWindowVar:
-#     """Structure for window vars"""
-#     def __init__(self):   
-#         self._win = None
-#         # self._img = ImgData()
-#         # self._imgidx = 0
+    def create_new_image(self, factory: any, w: int, h: int) -> None:
+        img = factory()
+        img.img_ptr = self.mlx.mlx_new_image(self.mlx_ptr, w, h)
+        #TODO error handing
+        img.width = w
+        img.height = h
+        img.data = self.mlx.mlx_get_data_addr(
+            img.img_ptr,
+            img.bytes_per_pixel,
+            img.stride,
+            img.endian)
+        return img
+
+#         self.addr = self.screen._mlx.mlx_get_data_addr(
+#             self.img_ptr,
+#             self.bbp,
+#             self.sl,
+#             self.edian
+
+    def clear_window():
+        #TODO
+        pass
+    
+    def clear_image():
+        #TODO
+        pass
 
 
 class Canvas():
@@ -65,43 +85,81 @@ class Image(ABC):
     width: int
     height: int
 
-#     @property
-#     @abstractmethod
-#     def img_ptr(self):
-#         """Backend image pointer (mlx image, texture handle, etc.)"""
-#         pass
+    def __init__(self) -> None:
+        self._img = None
+        self._addr = None
+        self._data = None
+        self._bpp = 0
+        self._sl = 0
+        self._endian = 0
+        self.width = 0
+        self.height = 0
 
-#     @property
-#     @abstractmethod
-#     def data(self):
-#         """Raw pixel buffer"""
-#         pass
+    #getters
+    @property
+    def addr(self):
+        return self._addr
 
-#     @property
-#     @abstractmethod
-#     def bytes_per_pixel(self) -> int:
-#         pass
+    @property
+    def img_ptr(self):
+        return self._img
 
-#     @property
-#     @abstractmethod
-#     def stride(self) -> int:
-#         """Bytes per row (line size)"""
-#         pass
+    @property
+    def data(self):
+        return self._data
 
-#     @property
-#     @abstractmethod
-#     def endian(self) -> int:
-#         pass
+    @property
+    def bytes_per_pixel(self):
+        return self._bpp
 
-#     @property
-#     @abstractmethod
-#     def width(self) -> int:
-#         pass
+    @property
+    def stride(self):
+        return self._sl
 
-#     @property
-#     @abstractmethod
-#     def height(self) -> int:
-#         pass
+    @property
+    def endian(self):
+        return self._endian
+
+    @property
+    def width(self):
+        return self.width
+
+    @property
+    def height(self):
+        return self.height
+
+    #setters
+    @addr.setter
+    def addr(self, addr: any) -> None:
+        self._addr = addr
+
+    @img_ptr.setter
+    def img_ptr(self, img_ptr: any) -> None:
+        self._img = img_ptr
+
+    @data.setter
+    def data(self, data: any) -> None:
+        self._data = data
+
+    @bytes_per_pixel.setter
+    def bytes_per_pixel(self, bpp: int) -> None:
+        self._bpp = bpp
+
+    @stride.setter
+    def stride(self, sl: int) -> None:
+        self._sl = sl
+
+    @endian.setter
+    def endian(self, endian: int) -> None:
+        self._endian = endian
+
+    @width.setter
+    def width(self, width: int) -> None:
+        self.width = width
+
+    @height.setter
+    def height(self, height: int) -> None:
+        self.height = height
 
     @abstractmethod
     def put_pixel(self, x: int, y: int, color: int) -> None:
@@ -126,6 +184,10 @@ class Image(ABC):
     #     self._data[offset + 2] = (color >> 16) & 0xFF
     #     self._data[offset + 3] = (color >> 24) & 0xFF
 
+
+        self._data, self._bpp, self._sl, self._endian = \
+            self.context.mlx.mlx_get_data_addr(self._img)
+
     #same as above but simpler
     def clear(self, color: int = 0x00000000):
         pixel_count = self.width * self.height
@@ -133,60 +195,16 @@ class Image(ABC):
 
 
 class MlxImageBuffer(Image):
-    def __init__(self, context: any, w: int, h: int) -> None:
-        self.context = context
-        self._img = self._create_new_img(w, h)
-        #self._img = canvas.context.mlx_new_image(self._context.mlx_ptr(), w, h)
-        self._data, self._bpp, self._sl, self._endian = \
-            self.context.mlx.mlx_get_data_addr(self._img)
-    
-    def _create_new_img(self, w: int, h: int) -> None:
-        #print(self.context)
-        return self.context.mlx.mlx_new_image(self.context.get_mlx_ptr(), w, h)
-    ## for different, separated images
-    # def render(self, image_obj, x, y):
-    #     self.screen.mlx_ptr.mlx_put_to_window(
-    #         self.screen.mlx_ptr,
-    #         self.win,
-    #         image_obj.img_ptr,
-    #         x,
-    #         y
-    #     )
+    def __init__(self) -> None:
+        super().__init__()
 
-    # @property
-    # def img_ptr(self):
-    #     return self._img
-
-    # @property
-    # def data(self):
-    #     return self._data
-
-    # @property
-    # def bytes_per_pixel(self):
-    #     return self._bpp
-
-    # @property
-    # def stride(self):
-    #     return self._sl
-
-    # @property
-    # def endian(self):
-    #     return self._endian
-
-    # @property
-    # def width(self):
-    #     return self._width
-
-    # @property
-    # def height(self):
-    #     return self._height
-    
     def put_pixel(self, x: int, y: int, color: int) -> None:
-        if x < 0 or y < 0 or x >= self._width or y >= self._height:
+        if x < 0 or y < 0 or x >= self.width or y >= self.height:
             return
         offset = y * self._sl + x * self._bbp
         self._write_color(offset, color)
 
+    #TODO: BE CAREFUL WITH THIS ONE NOW...
     def _write_color(self, offset: int, color: int) -> None:
         self._data[offset + 0] = color & 0xFF
         self._data[offset + 1] = (color >> 8) & 0xFF
@@ -211,19 +229,55 @@ class Renderer:
 class MazeRenderer(Renderer):
     """Maze-specific renderer"""
     def __init__(self, cell_size: int):
-        self.cell = cell_size
+        self.cell = cell_size #one direction
+        self.interior = cell_size - 2 #one direction
+        self.num_walls = 2 #one direction
 
-    def draw(self, target: any, state: any) -> None:
+    def draw(self, target_img: any, state: any) -> None:
         # """Draw a maze cell as a block of pixels"""
         # for dy in range(self.cell):
         #     for dx in range(self.cell):
         #         self.draw_pixel(target, x * self.cell + dx, y * self.cell + dy, color)
         """
-        maze is a domain object:
+        maze is a domain object (state because it might change):
         - maze.width
         - maze.height
         - maze.cells[y][x] or equivalent
         """
+        # I need to translate incoming information into something that the graphical lib can read
+        # so first, let's get how large it must be. Let's get the h and w in number of cells
+        # I have to account for the number of walls: they are shared, so it means that some walls
+        # have a wall less because it was already painted
+        H = len(state) * self.cell_size - len(state)
+        W = len(state[0]) * self_cell_size - len(state[0])
+
+        #now, let's translate this pixels to be drawn 
+        # but first, let fill all the space with a background color
+        for y in range(H):
+            for x in range(W):
+                put_pixel(x, y, color: 0x00FFFFFF)
+
+        #we are ready with the background, now the special interiors
+        #they should fit the following rule:
+        # - they should be between the walls
+        # - have a padding of 1 pixel
+        # we need to locate the exact place of the painting of each subspace
+        # pseudo code is:
+        for cell in cells.generator:
+            #get position in state:
+            position = cell.position
+            #jump always the first line
+            for i, row in enumerate(target.data, len(state) + self._sl):
+                #get position in image
+                if position.x != i:
+                    continue
+                for j, col in enumerate(row, 4):
+                    if position.y != j:
+                        continue
+
+                
+
+
         for y in range(state.height):
             for x in range(state.width):
                 cell = state.cells[y][x]
