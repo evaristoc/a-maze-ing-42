@@ -163,22 +163,36 @@ class Maze(ABC):
             self.two_dimensional_cell_grid[y_entry][x_entry] = (EntryCell
                                                                 (x_entry,
                                                                  y_entry))
-            self.remove_wall_between_two_adjacent_cells(
-                self.two_dimensional_cell_grid[y_entry]
-                                              [x_entry],
-                self.get_cell_at_position(x_entry, y_entry + 1)
-                )
+            if y_entry == self.maze_height_in_cells:
+                self.remove_wall_between_two_adjacent_cells(
+                    self.two_dimensional_cell_grid[y_entry]
+                                                  [x_entry],
+                    self.get_cell_at_position(x_entry, y_entry - 1)
+                    )
+            elif 0 >= y_entry < self.maze_height_in_cells:
+                self.remove_wall_between_two_adjacent_cells(
+                    self.two_dimensional_cell_grid[y_entry]
+                                                  [x_entry],
+                    self.get_cell_at_position(x_entry, y_entry + 1)
+                    )
 
         if self.is_position_inside_maze_bounds(x_exit, y_exit):
             self.two_dimensional_cell_grid[y_exit][x_exit] = (ExitCell
                                                               (x_exit,
                                                                y_exit))
             self.maze_exit_cell = (ExitCell(x_exit, y_exit))
-            self.remove_wall_between_two_adjacent_cells(
-                self.two_dimensional_cell_grid[y_exit]
-                                              [x_exit],
-                self.get_cell_at_position(x_exit - 1, y_exit)
-                )
+            if x_exit == self.maze_height_in_cells:
+                self.remove_wall_between_two_adjacent_cells(
+                    self.two_dimensional_cell_grid[y_exit]
+                                                  [x_exit],
+                    self.get_cell_at_position(x_exit - 1, y_exit)
+                    )
+            elif 0 >= x_exit < self.maze_width_in_cells:
+                self.remove_wall_between_two_adjacent_cells(
+                    self.two_dimensional_cell_grid[y_exit]
+                                                  [x_exit],
+                    self.get_cell_at_position(x_exit + 1, y_exit)
+                    )
 
     def get_adjacent_cells(self, cell):
         """
@@ -323,23 +337,40 @@ class Maze(ABC):
                             neighbor_cell
                         )
 
-    # ------------- Maze Printer -------------
-    def print_maze_to_stdout(self, solution=None) -> None:
+    def print_maze_to_stdout(self, solution=None,
+                             path_directions=None) -> None:
         """
         Prints an ASCII representation of the maze
         based on the wall bitmask of each cell.
         """
 
-        solution = solution or set()
+        solution = solution or []
+        path_directions = path_directions or []
 
         width = self.maze_width_in_cells
         height = self.maze_height_in_cells
 
-        FULL_BLOCK = "\033[91m███\033[0m"   # FourtyTwo
-        ENTRY = "\033[94m███\033[0m"
-        EXIT = "\033[95m███\033[0m"
+        FULL_BLOCK = "\033[91m███\033[0m"
+        ENTRY = "\033[94mENT\033[0m"
+        EXIT = "\033[95mEXT\033[0m"
         PATH = "\033[92m███\033[0m"
         EMPTY_BLOCK = "   "
+
+        DIR_TO_ARROW = {
+            "NORTH": "\033[92m ⟰ \033[0m",
+            "EAST":  "\033[92m ⭆ \033[0m",
+            "SOUTH": "\033[92m ⟱ \033[0m",
+            "WEST":  "\033[92m ⭅ \033[0m",
+        }
+
+        # Build arrow map: cell -> arrow
+        arrow_map = {}
+        if path_directions and len(solution) >= 2:
+            for cell, direction in zip(solution, path_directions):
+                arrow_map[cell] = DIR_TO_ARROW.get(direction, PATH)
+
+            # Final cell (no outgoing direction)
+            arrow_map[solution[-1]] = PATH
 
         # ───────────── Top boundary ─────────────
         for _ in range(width):
@@ -348,14 +379,11 @@ class Maze(ABC):
 
         # ───────────── Rows ─────────────
         for y in range(height):
-
-            # Vertical walls + interior
-            print("|", end="")  # Left boundary
+            print("|", end="")
 
             for x in range(width):
                 cell = self.get_cell_at_position(x, y)
 
-                # Interior
                 if isinstance(cell, FourtyTwoCell):
                     print(FULL_BLOCK, end="")
 
@@ -365,21 +393,21 @@ class Maze(ABC):
                 elif isinstance(cell, ExitCell):
                     print(EXIT, end="")
 
+                elif cell in arrow_map:
+                    print(arrow_map[cell], end="")
+
                 elif cell in solution:
                     print(PATH, end="")
 
                 else:
                     print(EMPTY_BLOCK, end="")
 
-                # East wall
                 print("|" if cell.has_east_wall() else " ", end="")
 
             print()
 
-            # Horizontal walls
             for x in range(width):
                 cell = self.get_cell_at_position(x, y)
-
                 print("+", end="")
                 print("---" if cell.has_south_wall() else "   ", end="")
 
