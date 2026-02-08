@@ -1,5 +1,5 @@
-from src.maze_factory import Maze
-from src.collect_config_variables import ConfigParser
+from src.maze_factory import Maze, Cell
+# from src.collect_config_variables import ConfigParser
 
 
 def convert_cell_path_to_directions(maze, path):
@@ -20,7 +20,7 @@ def write_hexadecimal_map_to_file(
     maze: Maze,
     entry_coords: tuple[int, int],
     exit_coords: tuple[int, int],
-    config: ConfigParser,
+    solution_path: list[Cell],
     output_file_path: str = "map_output.txt"
 ) -> None:
 
@@ -33,3 +33,7 @@ def write_hexadecimal_map_to_file(
 
         file.write(f"\nENTRY:\t{entry_coords}\n".expandtabs(8))
         file.write(f"EXIT:\t{exit_coords}\n".expandtabs(8))
+
+        chaotic_solution_path = convert_cell_path_to_directions(maze,
+                                                                solution_path)
+        file.write(f"PATH:\t{" ".join(chaotic_solution_path)}".expandtabs(8))

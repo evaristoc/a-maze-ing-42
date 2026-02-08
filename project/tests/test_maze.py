@@ -23,7 +23,7 @@ def main() -> None:
 
     maze_width = config["width"]
     maze_height = config["height"]
-    seed = 1221
+    seed = config["seed"]
 
     maze = Maze(maze_width, maze_height, seed)
 
@@ -42,15 +42,16 @@ def main() -> None:
     for path in solution:
         maze.print_maze_to_stdout(path)
         print(path)
+        path_for_file = path
 
     write_hexadecimal_map_to_file(maze, config["entry"], config["exit"],
-                                  config["perfect"],
+                                  path_for_file,
                                   config["output_file"]
                                   )
     # for column in maze.two_dimensional_cell_grid:
     #     for cell in column:
     #         print(cell)
-    maze.print_maze_to_stdout()
+    # maze.print_maze_to_stdout()
 
 
 if __name__ == "__main__":
