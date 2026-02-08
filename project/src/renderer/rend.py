@@ -81,7 +81,7 @@ class Canvas():
     #         self._win)
 
 
-class Image(ABC):
+class Image():
     width: int
     height: int
 
@@ -161,9 +161,22 @@ class Image(ABC):
     def height(self, height: int) -> None:
         self.height = height
 
-    @abstractmethod
     def put_pixel(self, x: int, y: int, color: int) -> None:
-        pass
+        if x < 0 or y < 0 or x >= self.width or y >= self.height:
+            return
+        offset = y * self._sl + x * self._bbp
+        self._write_color(offset, color)
+
+    #TODO: BE CAREFUL WITH THIS ONE NOW...
+    def _write_color(self, offset: int, color: int) -> None:
+        self._data[offset + 0] = color & 0xFF
+        self._data[offset + 1] = (color >> 8) & 0xFF
+        self._data[offset + 2] = (color >> 16) & 0xFF
+        self._data[offset + 3] = (color >> 24) & 0xFF
+
+    # @abstractmethod
+    # def put_pixel(self, x: int, y: int, color: int) -> None:
+    #     pass
 
     # # too concrete
     # def clear(self, color: int = 0x00000000):
@@ -185,8 +198,8 @@ class Image(ABC):
     #     self._data[offset + 3] = (color >> 24) & 0xFF
 
 
-        self._data, self._bpp, self._sl, self._endian = \
-            self.context.mlx.mlx_get_data_addr(self._img)
+        # self._data, self._bpp, self._sl, self._endian = \
+        #     self.context.mlx.mlx_get_data_addr(self._img)
 
     #same as above but simpler
     def clear(self, color: int = 0x00000000):
@@ -198,18 +211,18 @@ class MlxImageBuffer(Image):
     def __init__(self) -> None:
         super().__init__()
 
-    def put_pixel(self, x: int, y: int, color: int) -> None:
-        if x < 0 or y < 0 or x >= self.width or y >= self.height:
-            return
-        offset = y * self._sl + x * self._bbp
-        self._write_color(offset, color)
+    # def put_pixel(self, x: int, y: int, color: int) -> None:
+    #     if x < 0 or y < 0 or x >= self.width or y >= self.height:
+    #         return
+    #     offset = y * self._sl + x * self._bbp
+    #     self._write_color(offset, color)
 
-    #TODO: BE CAREFUL WITH THIS ONE NOW...
-    def _write_color(self, offset: int, color: int) -> None:
-        self._data[offset + 0] = color & 0xFF
-        self._data[offset + 1] = (color >> 8) & 0xFF
-        self._data[offset + 2] = (color >> 16) & 0xFF
-        self._data[offset + 3] = (color >> 24) & 0xFF
+    # #TODO: BE CAREFUL WITH THIS ONE NOW...
+    # def _write_color(self, offset: int, color: int) -> None:
+    #     self._data[offset + 0] = color & 0xFF
+    #     self._data[offset + 1] = (color >> 8) & 0xFF
+    #     self._data[offset + 2] = (color >> 16) & 0xFF
+    #     self._data[offset + 3] = (color >> 24) & 0xFF
 
 
 class Renderer:
@@ -217,7 +230,7 @@ class Renderer:
     # def draw_pixel(self, target, x: int, y: int, color: int):
     #     target.put_pixel(x, y, color)
 
-    def draw(self, target: any, state: any) -> None:
+    def draw(self, target: any, state: any, elements: list[str] = None) -> None:
         """Show the image; MLX handled in boundary layer"""
         pass
 
@@ -228,16 +241,37 @@ class Renderer:
 #         self.present(self.maze_img)
 class MazeRenderer(Renderer):
     """Maze-specific renderer"""
+    DEFAULT_COLOURS = {
+        "background": 0x00222222,
+        "fortytwo": 0x00FFFFFF,
+        "entrance": 0x0000FF00,
+        "exit": 0x00FF00FF,
+        "walls": 0x00AAAAAA,
+        "path": 0x0000FF00}
     def __init__(self, cell_size: int):
         self.cell = cell_size #one direction
         self.interior = cell_size - 2 #one direction
         self.num_walls = 2 #one direction
 
-    def draw(self, target_img: any, state: any) -> None:
-        # """Draw a maze cell as a block of pixels"""
-        # for dy in range(self.cell):
-        #     for dx in range(self.cell):
-        #         self.draw_pixel(target, x * self.cell + dx, y * self.cell + dy, color)
+    def draw(self,
+    target_img: any,
+    state: any,
+    elements: dict[str, int] = None) -> None:
+        elements = elements or self.DEFAULT_COLOURS
+        if "background" in elements:
+            self._background(target_img, state, elements["background"])
+        if "fortytwo" in elements:
+            self._fortytwo(target_img, state, elements["fortytwo"])
+        if "entrance" in elements:
+            self._entrance(target_img, state, elements["entrance"])
+        if "exit" in elements:
+            self._exit(target_img, state, elements["exit"])
+        if "walls" in elements:
+            self._walls(target_img, state, elements["walls"])
+        if "path" in elements:
+            self._path(target_img, state, elements["path"])
+    
+    def _entrance(self, target, cx: int, cy: int, color: int):
         """
         maze is a domain object (state because it might change):
         - maze.width
@@ -248,42 +282,24 @@ class MazeRenderer(Renderer):
         # so first, let's get how large it must be. Let's get the h and w in number of cells
         # I have to account for the number of walls: they are shared, so it means that some walls
         # have a wall less because it was already painted
-        H = len(state) * self.cell_size - len(state)
-        W = len(state[0]) * self_cell_size - len(state[0])
+        H = len(state) * self.cell_size
+        W = len(state[0]) * self_cell_size
+        padding = 2
+        special_col_range = 3
 
         #now, let's translate this pixels to be drawn 
         # but first, let fill all the space with a background color
-        for y in range(H):
-            for x in range(W):
-                put_pixel(x, y, color: 0x00FFFFFF)
-
-        #we are ready with the background, now the special interiors
-        #they should fit the following rule:
-        # - they should be between the walls
-        # - have a padding of 1 pixel
-        # we need to locate the exact place of the painting of each subspace
-        # pseudo code is:
-        for cell in cells.generator:
-            #get position in state:
-            position = cell.position
-            #jump always the first line
-            for i, row in enumerate(target.data, len(state) + self._sl):
-                #get position in image
-                if position.x != i:
-                    continue
-                for j, col in enumerate(row, 4):
-                    if position.y != j:
-                        continue
-
-                
-
-
-        for y in range(state.height):
-            for x in range(state.width):
-                cell = state.cells[y][x]
-
-                color = self._cell_color(cell)
-                self._draw_cell(target, x, y, color)
+        for cell_y in range(H):
+            for cell_x in range(W):
+                cell = state[cell_y][cell_x]
+                start_drawer_x = cell_x * self.cell_size
+                start_drawer_y = cell_y * self.cell_size
+                # Interior
+                if isinstance(cell, FourtyTwoCell):
+                    rang = padding + special_col
+                    for d_y in range(start_drawer_y + padding, start_drawer_y + rang):
+                        for d_x in range(start_drawer_x + padding, start_drawer_x + rang):
+                            target_img.put_pixel(d_x, d_y, 0x00222222)
 
     def _draw_cell(self, target, cx: int, cy: int, color: int):
         px = cx * self.cell
@@ -356,6 +372,45 @@ class MazeRenderer(Renderer):
 #         data[offset + 1] = (color >> 8) & 0xFF # Green
 #         data[offset + 2] = (color >> 16) & 0xFF# Red
 #         data[offset + 3] = 0                   # Alpha
+
+                # elif isinstance(cell, EntryCell):
+                #     print(ENTRY, end="")
+                # elif isinstance(cell, ExitCell):
+                #     print(EXIT, end="")
+                # put_pixel(x, y, color: 0x00FFFFFF)
+
+        #we are ready with the background, now the special interiors
+        #they should fit the following rule:
+        # - they should be between the walls
+        # - have a padding of 1 pixel
+        # we need to locate the exact place of the painting of each subspace
+        # pseudo code is:
+        # for cell in cells.generator:
+        #     #get position in state:
+        #     position = cell.position
+        #     #jump always the first line
+        #     for i, row in enumerate(target.data, len(state) + self._sl):
+        #         #get position in image
+        #         if position.x != i:
+        #             continue
+        #         for j, col in enumerate(row, 4):
+        #             if position.y != j:
+        #                 continue
+
+                
+
+
+        # for y in range(state.height):
+        #     for x in range(state.width):
+        #         cell = state.cells[y][x]
+
+        #         color = self._cell_color(cell)
+        #         self._draw_cell(target, x, y, color)
+
+        # """Draw a maze cell as a block of pixels"""
+        # for dy in range(self.cell):
+        #     for dx in range(self.cell):
+        #         self.draw_pixel(target, x * self.cell + dx, y * self.cell + dy, color)
 
 # @dataclass
 # class ImgData:
