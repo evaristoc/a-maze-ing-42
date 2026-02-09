@@ -39,20 +39,21 @@ def main() -> None:
     context = MlxContext(mlx.Mlx())
     print(context)
     cell_size = 25
-    canvas = Canvas(context, maze_width * cell_size, maze_height * cell_size, "maze test")
+    canvas = Canvas(context, maze_width*cell_size, maze_height*cell_size, "maze test")
     #this is incorrect!!!
     #canvas_idptr = context.create_new_canvas(maze_width*cell_size, maze_height*cell_size, "maze")
     print(canvas)
-
-    # #image = context.create_new_image(maze_width, maze_height)
-    # image = canvas.create_new_image(MlxImageBuffer, maze_width*cell_size, maze_height*cell_size)
-    # print(image)
-    # image.clear()
-    # # print("bpp",image.bytes_per_pixel)
-    # renderer = MazeRenderer(cell_size)
-    # print(renderer)
-    # renderer.draw(image, maze.two_dimensional_cell_grid)
-    # canvas.present(image)
+    context.mlx.mlx_clear_window(context.mlx_ptr, canvas._win)
+    # context.mlx.mlx_string_put(context.mlx_ptr, canvas._win, 20, 20, 255, "Hello PyMlx!")
+    #image = context.create_new_image(maze_width, maze_height)
+    image = canvas.create_new_image(MlxImageBuffer, maze_width*cell_size, maze_height*cell_size)
+    print(image)
+    image.clear()
+    # print("bpp",image.bytes_per_pixel)
+    renderer = MazeRenderer(cell_size)
+    print(renderer)
+    renderer.draw(image, maze.two_dimensional_cell_grid)
+    canvas.present(image)
 
     #print(maze.two_dimensional_cell_grid[0][0])
     def gere_close_1(context):

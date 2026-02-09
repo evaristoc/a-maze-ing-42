@@ -110,16 +110,33 @@ class MazeRenderer(Renderer):
                 target_img.put_pixel(0, base_y + dy, color)
 
     def _background(self, target_img, state, color):
-        cell_size = self.cell_size
-        height_in_cells = len(state)
-        width_in_cells = len(state[0])
+        # cell_size = self.cell_size
+        # height_in_cells = len(state)
+        # width_in_cells = len(state[0])
 
-        H = height_in_cells * cell_size
-        W = width_in_cells * cell_size
+        # H = height_in_cells * cell_size
+        # W = width_in_cells * cell_size
 
-        for y in range(H):
-            for x in range(W):
-                target_img.put_pixel(x, y, color) 
+        # for y in range(H):
+        #     for x in range(W):
+        #         target_img.put_pixel(x, y, 0x00FF00FF)
+        # Add some red pixels
+        pixel_positions = [
+            0 * 200 * 4,                   # top left
+            (1 * 200 + 1) * 4,             # top left + 1
+            (199 * 200 + 199) * 4,         # bottom right
+            (198 * 200 + 198) * 4,          # bottom right - 1
+            (197 * 200 + 197) * 4,          # bottom right - 1
+            (196 * 200 + 196) * 4,          # bottom right - 1
+        ]
+        print(len(target_img.data))
+        for pos in pixel_positions:
+            if pos < len(target_img.data) - 3:
+                print(target_img.data[pos:pos+4])
+                target_img.data[pos:pos+4] = (0xFFFF0000).to_bytes(4, 'little')
+                print(target_img.data[pos:pos+4])
+        for pixel in range(0, len(target_img.data), 4):
+            target_img.data[pixel:pixel+4] = (0xFFFF0000).to_bytes(4, 'little')
 
     # TODO finish the following functions
     def _path():

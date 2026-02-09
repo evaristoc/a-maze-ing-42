@@ -65,6 +65,46 @@ def main() -> None:
     # maze.randomly_remove_some_walls(0.6)
     xvar.mlx = MlxContext(mlx.Mlx())
     print(xvar.mlx)
+    xvar.mlx_ptr = xvar.mlx.mlx_ptr
+    print(xvar.mlx_ptr)
+    print(xvar.mlx.mlx.mlx_get_screen_size(xvar.mlx_ptr))
+    # xvar.win_1 = xvar.mlx._create_new_canvas(400, 400, "test")
+    xvar.win_1 = xvar.mlx.mlx.mlx_new_window(xvar.mlx_ptr, 400, 400, "test")
+    xvar.img_1.img = xvar.mlx.mlx.mlx_new_image(xvar.mlx_ptr, 200, 200)
+    xvar.img_1.width = 200
+    xvar.img_1.height = 200
+    xvar.img_1.data, xvar.img_1.bpp, xvar.img_1.sl, xvar.img_1.iformat = \
+        xvar.mlx.mlx.mlx_get_data_addr(xvar.img_1.img)
+    # Fill image #1
+    for i in range(xvar.img_1.sl * 200):
+        xvar.img_1.data[i] = 0x80
+
+    for i in range(xvar.img_1.sl * 100):
+        xvar.img_1.data[i] = 0xFF
+
+    try:
+        # Add some red pixels
+        pixel_positions = [
+            0 * 200 * 4,                   # top left
+            (1 * 200 + 1) * 4,             # top left + 1
+            (199 * 200 + 199) * 4,         # bottom right
+            (198 * 200 + 198) * 4          # bottom right - 1
+        ]
+        
+        for pos in pixel_positions:
+            if pos < len(xvar.img_1.data) - 3:
+                xvar.img_1.data[pos:pos+4] = (0xFFFF0000).to_bytes(4, 'little')
+    except Exception as e:
+        print(f"Error img1: {e}", file=sys.stderr)
+        sys.exit(1)
+
+    def gere_close_1(xvar):
+        xvar.mlx.mlx.mlx_loop_exit(xvar.mlx_ptr)
+    xvar.mlx.mlx.mlx_hook(xvar.win_1, 33, 0, gere_close_1, xvar)
+
+    xvar.mlx.mlx.mlx_loop(xvar.mlx_ptr)
+    xvar.mlx.mlx.mlx_destroy_window(xvar.mlx_ptr, xvar.win_1)
+
     # cell_size = 25
     # canvas = Canvas(context, maze_width * cell_size, maze_height * cell_size, "maze test")
     #this is incorrect!!!
