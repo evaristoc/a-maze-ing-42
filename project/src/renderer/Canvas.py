@@ -12,7 +12,8 @@ class Canvas:
         except Exception as e:
             print(f"Error: Win create: {e}", file=sys.stderr)
             sys.exit(1)
-        self.main_buffer = Image()
+        #self.main_buffer = Image()
+        self.main_buffer = None
 
     def create_new_image(self, img_class: Image, w: int, h: int) -> Image:
         self.main_buffer = img_class()
@@ -25,12 +26,11 @@ class Canvas:
         return self.main_buffer
 
     ## for buffering a single, modifiable image
-    def present(self, imagetarget: Image) -> None:
-        self.main_buffer = imagetarget
+    def present(self, image) -> None:
         self.context.mlx.mlx_put_image_to_window(
             self.context.mlx_ptr,
             self._win,
-            self.main_buffer.img_ptr,
+            image.img_ptr,
             0,
             0
         )

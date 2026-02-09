@@ -72,6 +72,7 @@ class Image():
     def put_pixel(self, x: int, y: int, color: int) -> None:
         if x < 0 or y < 0 or x >= self.width or y >= self.height:
             return
+        print("something")
         bytes_per_pixel = self._bpp // 8
         offset = y * self._sl + x * bytes_per_pixel
         self._write_color(offset, color)
