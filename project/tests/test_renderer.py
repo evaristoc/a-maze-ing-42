@@ -38,19 +38,29 @@ def main() -> None:
     # maze.randomly_remove_some_walls(0.6)
     context = MlxContext(mlx.Mlx())
     print(context)
-    cell_size = 7
-    canvas = context.create_new_canvas(maze_width*cell_size, maze_height*cell_size, "maze")
+    cell_size = 25
+    canvas = Canvas(context, maze_width * cell_size, maze_height * cell_size, "maze test")
+    #this is incorrect!!!
+    #canvas_idptr = context.create_new_canvas(maze_width*cell_size, maze_height*cell_size, "maze")
     print(canvas)
 
-    #image = context.create_new_image(maze_width, maze_height)
-    image = conntext.create_new_image(MlxImageBuffer, maze_width*cell_size, maze_height*cell_size)
+    # #image = context.create_new_image(maze_width, maze_height)
+    image = canvas.create_new_image(MlxImageBuffer, maze_width*cell_size, maze_height*cell_size)
     print(image)
     image.clear()
-
+    # print("bpp",image.bytes_per_pixel)
     renderer = MazeRenderer(cell_size)
     print(renderer)
+    renderer.draw(image, maze.two_dimensional_cell_grid)
+    canvas.present(image)
+    #print(maze.two_dimensional_cell_grid[0][0])
+    def gere_close_1(context):
+        context.mlx.mlx_loop_exit(context.mlx_ptr)
+    context.mlx.mlx_hook(canvas, 33, 0, gere_close_1, context) 
+    context.create_loop()
+    context.destroy_window(canvas)
 
-    print(maze.two_dimensional_cell_grid)
+
 
     # write_hexadecimal_map_to_file(maze, config["entry"], config["exit"],
     #                               config["perfect"],
