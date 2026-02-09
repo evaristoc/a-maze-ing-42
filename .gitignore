@@ -13,3 +13,7 @@ ubuntu-*.log
 *.private_key
 id_rsa
 id_ed25519
+
+# pycache
+__pycache__
+map_output.txt

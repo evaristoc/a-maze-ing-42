@@ -7,3 +7,4 @@ mlx_CLXV/
 
 #log files
 *.egg-info/
+map_output.txt

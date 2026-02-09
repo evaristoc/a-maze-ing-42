@@ -9,7 +9,7 @@ install: $(VENV)/bin/activate install-deps
 
 $(VENV)/bin/activate: 
 	@test -d $(VENV) || (echo "Creating .venv..." && python3 -m venv $(VENV)) 
- 	.venv/bin/pip install --upgrade pip 
+	.venv/bin/pip install --upgrade pip 
 	@echo "Virtual environment ready." 
 	
 # Install dependencies and MiniLibX 

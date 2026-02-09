@@ -1,0 +1,10 @@
+#Hexadecimal wall representation is NESW.
+#Each number is represented by double the previous coordinate, or 0.
+# meaning NESW = 1111 if all walls are up (NESW) or 1001 if only North and East walls are up (N00W), this way we can easily see which number represents a wall.
+# from left to right each binary digit represents(8, 4, 2, 1)
+
+# then we can translate this into one character/digit in hexadecimal because:
+# 1111 = 8 + 4 + 2 + 1 = 16 = f and 0000 = 0 + 0 + 0 + 0 = 0
+
+# so our representations will be from 0 to f representing all the possible wall combinations in one character that we can make a grid out of.
+# 1111 would become f, 1001 would become 8 and so on.
