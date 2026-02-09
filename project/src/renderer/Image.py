@@ -74,6 +74,8 @@ class Image():
             return
         bytes_per_pixel = self._bpp // 8
         offset = y * self._sl + x * bytes_per_pixel
+        if offset + bytes_per_pixel - 1 >= len(self._data):
+            return
         self._write_color(offset, color)
 
     #TODO: BE CAREFUL WITH THIS ONE NOW...

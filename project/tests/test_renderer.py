@@ -7,7 +7,7 @@ import sys
 # Pick a seed, just a random number, fill in the config file in project.
 # Then generate the maze from the project folder by runnning it with:
 # python3 -m tests.test_maze config.txt
-
+frame = 0
 
 def main() -> None:
 
@@ -47,7 +47,7 @@ def main() -> None:
     # context.mlx.mlx_string_put(context.mlx_ptr, canvas._win, 20, 20, 255, "Hello PyMlx!")
     #image = context.create_new_image(maze_width, maze_height)
     image = canvas.create_new_image(MlxImageBuffer, maze_width*cell_size, maze_height*cell_size)
-    print(image)
+    print("image data", image.endian, image.stride)
     image.clear()
     # print("bpp",image.bytes_per_pixel)
     renderer = MazeRenderer(cell_size)
@@ -58,7 +58,23 @@ def main() -> None:
     #print(maze.two_dimensional_cell_grid[0][0])
     def gere_close_1(context):
         context.mlx.mlx_loop_exit(context.mlx_ptr)
-    context.mlx.mlx_hook(canvas._win, 33, 0, gere_close_1, context) 
+    context.mlx.mlx_hook(canvas._win, 33, 0, gere_close_1, context)
+    def update_frame(context):
+        global frame
+        # clear or modify image
+        image.clear()
+        colors = [0x0000FF00, 0x5500FF00, 0xAA00FF00, 0xDD00FF00, 0xFF00FF00]
+        # draw something changing with frame
+        value = frame % 5
+        renderer.draw(image, cell_size, {"fortytwo": colors[value]})
+        
+        # push to window
+        canvas.present(image)
+        
+        # increment frame counter
+        frame += 1
+        return 0  # important for mlx_loop_hook in MLX
+    context.mlx.mlx_loop_hook(context.mlx_ptr, update_frame, context)
     context.create_loop()
     context.destroy_window(canvas._win)
 

@@ -12,12 +12,12 @@ class Renderer:
 class MazeRenderer(Renderer):
     """Maze-specific renderer"""
     DEFAULT_COLOURS = {
-        "background": 0x00222222,
-        "fortytwo": 0x00FFFFFF,
-        "entrance": 0x0000FF00,
-        "exit": 0x00FF00FF,
-        "walls": 0x00AAAAAA,
-        "path": 0x0000FF00}
+        "background": 0xFF222222,
+        "fortytwo": 0xFFFFFFFF,
+        "entrance": 0xFF00FF00,
+        "exit": 0xFFFF00FF,
+        "walls": 0xFFAAAAAA,
+        "path": 0xFF00FF00}
     
     def __init__(self, cell_size: int) -> None:
         self.cell_size = cell_size #one direction
@@ -73,7 +73,7 @@ class MazeRenderer(Renderer):
                         px = start_x + dx
                         py = start_y + dy
                         #print("inside fortytwo")
-                        target_img.put_pixel(px, py, 0x00FF00FF)
+                        target_img.put_pixel(px, py, 0x5500FF00)
 
     def _walls(self, target_img, state, color):
         for y, row in enumerate(state):
