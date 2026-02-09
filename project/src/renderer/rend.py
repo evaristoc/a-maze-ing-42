@@ -27,8 +27,8 @@ class MlxContext():
     def create_new_canvas(self, w: int, h: int, title: str) -> any:
         return self.mlx.mlx_new_window(self.mlx_ptr, w, h, title)
 
-    def create_new_image(self, factory: Type["Image"], w: int, h: int) -> "Image":
-        img = factory()
+    def create_new_image(self, img_class: Type["Image"], w: int, h: int) -> "Image":
+        img = img_class()
         img.img_ptr = self.mlx.mlx_new_image(self.mlx_ptr, w, h)
         #TODO error handing
         img.width = w
