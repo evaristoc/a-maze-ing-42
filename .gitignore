@@ -16,6 +16,10 @@ id_ed25519
 
 # pycache
 __pycache__
+<<<<<<< HEAD
 
 # references
 references/
+=======
+map_output.txt
+>>>>>>> 3b0cca359d2434eca94859c149571175a9442aa0

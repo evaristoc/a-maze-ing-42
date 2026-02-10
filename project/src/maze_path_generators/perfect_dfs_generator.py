@@ -33,6 +33,10 @@ class PerfectMazeDFSGenerator(MazePathGenerator):
                 current_cell,
                 neighbor_cell
             )
+            self.maze.remove_wall_between_two_adjacent_cells(
+                neighbor_cell,
+                current_cell
+            )
 
             visited.add(neighbor_cell)
             stack.append(neighbor_cell)

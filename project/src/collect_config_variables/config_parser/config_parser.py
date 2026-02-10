@@ -13,6 +13,7 @@ class ConfigParser:
     height: int
     entry: Tuple[int, int]
     exit: Tuple[int, int]
+    seed: int
     output_file: Path
     perfect: bool
 
@@ -55,7 +56,7 @@ class ConfigParser:
 
     def _validate_and_build(values: Dict[str, str]) -> "ConfigParser":
 
-        required = {"WIDTH", "HEIGHT", "ENTRY", "EXIT",
+        required = {"WIDTH", "HEIGHT", "ENTRY", "EXIT", "SEED",
                     "OUTPUT_FILE", "PERFECT"}
         missing = required - values.keys()
 
@@ -67,6 +68,7 @@ class ConfigParser:
         height = ConfigParser._parse_positive_int(values["HEIGHT"], "HEIGHT")
         entry = ConfigParser._parse_coordinates(values["ENTRY"], "ENTRY")
         exit_ = ConfigParser._parse_coordinates(values["EXIT"], "EXIT")
+        seed = ConfigParser._parse_positive_int(values["SEED"], "SEED")
         output_file = Path(values["OUTPUT_FILE"])
         perfect = ConfigParser._parse_bool(values["PERFECT"], "PERFECT")
 
@@ -81,6 +83,7 @@ class ConfigParser:
             height=height,
             entry=entry,
             exit=exit_,
+            seed=seed,
             output_file=output_file,
             perfect=perfect,
         )

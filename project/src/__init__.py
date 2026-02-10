@@ -14,9 +14,12 @@ from .maze_path_generators import (MazePathGenerator,
                                    PerfectMazeDFSGenerator)
 
 from .renderer import (MlxContext, Canvas, MlxImageBuffer, MazeRenderer)
+from .maze_solvers import (MazeSolver, SinglePathSolver, AllPathsSolver)
 
 __all__ = ["ConfigParser", "ConfigError", "write_hexadecimal_map_to_file",
            "Cell", "FourtyTwoCell", "EntryCell", "ExitCell", "Maze",
            "MazePathGenerator", "SimpleMazeGenerator",
            "PerfectMazeDFSGenerator", "MlxContext", "Canvas",
-           "MlxImageBuffer", "MazeRenderer"]
+           "MlxImageBuffer", "MazeRenderer",
+           "PerfectMazeDFSGenerator",
+           "MazeSolver", "SinglePathSolver", "AllPathsSolver"]

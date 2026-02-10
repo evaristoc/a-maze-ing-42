@@ -11,6 +11,10 @@ mlx_CLXV*/
 
 #log files
 *.egg-info/
+<<<<<<< HEAD
 
 #created wheels
 mlx-2.2-py3-none-manylinux1_x86_64.whl
+=======
+map_output.txt
+>>>>>>> 3b0cca359d2434eca94859c149571175a9442aa0
