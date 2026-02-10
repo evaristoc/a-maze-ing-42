@@ -76,7 +76,7 @@ class MazeRenderer(Renderer):
                     break
                 yield (row_mem, col_mem)
 
-    def __draw_cell_interior(self, target_img, x_cells: int, y_cells: int, color: int):
+    def __draw_cell_interior(self, target_img, x_cell: int, y_cell: int, color: int):
         start_x = self.wall_thickness + x_cell * (self.cell_size + self.wall_thickness) + self.padding
         start_y = self.wall_thickness + y_cell * (self.cell_size + self.wall_thickness) + self.padding
         interior_size = self.cell_size - 2 * self.padding
