@@ -91,5 +91,10 @@ class Image():
         self._data[:] = (color.to_bytes(4, byteorder="little")) * pixel_count
 
 
-class MlxImageBuffer(Image):
+class ImageBuffer(Image):
+    """writable, frame-owned"""
+    pass
+
+class ImageAsset(Image):
+    """read-only, loaded"""
     pass

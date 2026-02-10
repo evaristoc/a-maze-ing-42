@@ -1,11 +1,11 @@
 from .MlxContext import MlxContext
-from .Canvas import Canvas
-from .Image import Image, MlxImageBuffer
+from .Viewport import Viewport
+from .Image import Image, ImageBuffer
 from .Renderers import MazeRenderer
 
 __all__ = ["MlxContext",
-           "Canvas",
+           "Viewport",
            "Image",
-           "MlxImageBuffer",
+           "ImageBuffer",
            "MazeRenderer"
            ]
