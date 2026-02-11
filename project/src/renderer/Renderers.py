@@ -5,6 +5,9 @@ TODO
 - [ ] prepare for the use of triangles to indicate path
 - [ ] refine the use of padding for the hall painting (use options instead of a single color arg)
 - [ ] evaluate the use of generators for a better control of streams
+- [ ] cell renderer class?
+- [ ] solve the origin issue, probably moving everything to the very top left corner?
+- [ ] treating the whole wall as a single block instead of separated walls? Facilitate animations and pattern strokes
 """
 
 
