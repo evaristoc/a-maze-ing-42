@@ -86,31 +86,12 @@ class MazeRenderer(Renderer):
 
 
     def __draw_background(self, target_img, state, color):
-        # cell_size = self.__cell_center
-        # height_in_cells = len(state)
-        # width_in_cells = len(state[0])
         pix_tot_w, pix_tot_h = self.__get_total_size(len(state[0]), len(state))
-        # H = height_in_cells * cell_size
-        # W = width_in_cells * cell_size
         print(pix_tot_w, pix_tot_h)
         for y in range(pix_tot_h):
             for x in range(pix_tot_w):
                 target_img.put_pixel(x, y, 0xFF5500FF)
-        # Add some red pixels
-        # pixel_positions = [
-        #     0 * 200 * 4,                   # top left
-        #     (1 * 200 + 1) * 4,             # top left + 1
-        #     (199 * 200 + 199) * 4,         # bottom right
-        #     (198 * 200 + 198) * 4,          # bottom right - 1
-        #     (197 * 200 + 197) * 4,          # bottom right - 1
-        #     (196 * 200 + 196) * 4,          # bottom right - 1
-        # ]
-        # print(len(target_img.data))
-        # for pos in pixel_positions:
-        #     if pos < len(target_img.data) - 3:
-        #         print(target_img.data[pos:pos+4])
-        #         target_img.data[pos:pos+4] = (0xFFFF0000).to_bytes(4, 'little')
-        #         print(target_img.data[pos:pos+4])
+
 
     def __draw_cell_interior(self, target_img: Image, x_cell: int, y_cell: int, color: int) -> None:
         # map through translation formula x_cell, y_cell coordinates to the position 
