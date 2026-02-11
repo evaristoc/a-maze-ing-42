@@ -39,9 +39,9 @@ def main() -> None:
     context = MlxContext(mlx.Mlx())
     print(context._mlxbinding)
     print(context)
-    cell_size = 20
-    img_width = cell_size * maze_width - (maze_width - 1) * int(cell_size * .2)
-    img_height = cell_size * maze_height - (maze_height - 1) * int(cell_size * .2)
+    cell_size = 50
+    img_width = cell_size * maze_width - (maze_width - 1) * int(cell_size * .2) # important, but precalculated in advance...
+    img_height = cell_size * maze_height - (maze_height - 1) * int(cell_size * .2) # important, but precalculated in advance...
     viewport = context.create_new_viewport(img_width, img_height, "maze test")
     #this is incorrect!!!
     #canvas_idptr = context.create_new_canvas(maze_width*cell_size, maze_height*cell_size, "maze")

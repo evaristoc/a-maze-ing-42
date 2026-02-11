@@ -25,7 +25,7 @@ class Renderer:
 class MazeRenderer(Renderer):
     """Maze-specific renderer"""
     DEFAULT_COLORS = {
-        "background": 0xFF220022,
+        "background": 0xFF2200FF,
         "fourtytwo": 0xFFFFFFFF,
         "entrance": 0xFF00FF00,
         "exit": 0xFFFF00FF,
@@ -33,17 +33,11 @@ class MazeRenderer(Renderer):
         "path": 0xFF00FF00,
     }
     
-    __total_cell_size = 50
-    __wall_thickness = int(__total_cell_size * .2)
-    __interior_cell_size = __total_cell_size - 2 * __wall_thickness
-    __padding = int(__interior_cell_size * .2)
-    __cell_center = __interior_cell_size - 2 * __padding
-
-    def __init__(self, total_cell_size: int) -> None:
+    def __init__(self, total_cell_size: int = 50) -> None:
         self.__total_cell_size = total_cell_size
         self.__wall_thickness = int(self.__total_cell_size * .2)
         self.__interior_cell_size = self.__total_cell_size - 2 * self.__wall_thickness
-        self.__padding = int(self.__interior_cell_size * .2)
+        self.__padding = int(self.__interior_cell_size * .1)
         self.__cell_center = self.__interior_cell_size - 2 * self.__padding
 
     def draw(self,
@@ -59,12 +53,13 @@ class MazeRenderer(Renderer):
     # - open channels between cells are background coloured
     # """
         elements = elements or self.DEFAULT_COLORS
-        pixel_totwidth, pixel_totheight = self.__get_total_size(len(state[0]), len(state))
         # we paint everything with background if background (almost like clearing)
         if "background" in elements:
-            for x_img in range(pixel_totwidth):
-                for y_img in range(pixel_totheight):
-                    target_img.put_pixel(x_img, y_img, elements["background"])
+            print("background")
+            self.__draw_background(target_img, state, elements["background"])
+            # for x_img in range(pix_totw):
+            #     for y_img in range(pix_toth):
+            #         target_img.put_pixel(x_img, y_img, elements["background"])
         
         for r in state:
             for c in r:
@@ -84,11 +79,38 @@ class MazeRenderer(Renderer):
                 # if "path" in elements:
                 #     self._path(target_img, state, elements["path"])
 
-    def __get_total_size(self, num_cells_x: int, num_cells_y: int):
+    def __get_total_size(self, num_cells_x: int, num_cells_y: int): # utils
         total_w = num_cells_x * self.__total_cell_size - self.__wall_thickness * (num_cells_x - 1)
         total_h = num_cells_y * self.__total_cell_size - self.__wall_thickness * (num_cells_y - 1)
         return total_w, total_h
 
+
+    def __draw_background(self, target_img, state, color):
+        # cell_size = self.__cell_center
+        # height_in_cells = len(state)
+        # width_in_cells = len(state[0])
+        pix_tot_w, pix_tot_h = self.__get_total_size(len(state[0]), len(state))
+        # H = height_in_cells * cell_size
+        # W = width_in_cells * cell_size
+        print(pix_tot_w, pix_tot_h)
+        for y in range(pix_tot_h):
+            for x in range(pix_tot_w):
+                target_img.put_pixel(x, y, 0xFF5500FF)
+        # Add some red pixels
+        # pixel_positions = [
+        #     0 * 200 * 4,                   # top left
+        #     (1 * 200 + 1) * 4,             # top left + 1
+        #     (199 * 200 + 199) * 4,         # bottom right
+        #     (198 * 200 + 198) * 4,          # bottom right - 1
+        #     (197 * 200 + 197) * 4,          # bottom right - 1
+        #     (196 * 200 + 196) * 4,          # bottom right - 1
+        # ]
+        # print(len(target_img.data))
+        # for pos in pixel_positions:
+        #     if pos < len(target_img.data) - 3:
+        #         print(target_img.data[pos:pos+4])
+        #         target_img.data[pos:pos+4] = (0xFFFF0000).to_bytes(4, 'little')
+        #         print(target_img.data[pos:pos+4])
 
     def __draw_cell_interior(self, target_img: Image, x_cell: int, y_cell: int, color: int) -> None:
         # map through translation formula x_cell, y_cell coordinates to the position 
