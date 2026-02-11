@@ -1,6 +1,6 @@
 from tests import Maze, ConfigError, ConfigParser
 import mlx
-from tests import MlxContext, Viewport, mageBuffer, MazeRenderer
+from tests import MlxContext, ImageBuffer, MazeRenderer
 from tests import write_hexadecimal_map_to_file
 import sys
 
@@ -37,46 +37,57 @@ def main() -> None:
 
     # maze.randomly_remove_some_walls(0.6)
     context = MlxContext(mlx.Mlx())
+    print(context._mlxbinding)
     print(context)
-    cell_size = 25
-    canvas = Canvas(context, maze_width*cell_size, maze_height*cell_size, "maze test")
+    cell_size = 50
+    viewport = context.create_new_viewport(maze_width*cell_size, maze_height*cell_size, "maze test")
     #this is incorrect!!!
     #canvas_idptr = context.create_new_canvas(maze_width*cell_size, maze_height*cell_size, "maze")
-    print(canvas)
-    context.mlx.mlx_clear_window(context.mlx_ptr, canvas._win)
+    print(viewport)
+    #context.mlx.mlx_clear_window(context.mlx_ptr, canvas._win)
     # context.mlx.mlx_string_put(context.mlx_ptr, canvas._win, 20, 20, 255, "Hello PyMlx!")
     #image = context.create_new_image(maze_width, maze_height)
-    image = canvas.create_new_image(MlxImageBuffer, maze_width*cell_size, maze_height*cell_size)
+    image = context.create_new_image(ImageBuffer, maze_width*cell_size, maze_height*cell_size)
     print("image data", image.endian, image.stride)
     image.clear()
     # print("bpp",image.bytes_per_pixel)
-    renderer = MazeRenderer(cell_size)
+    renderer = MazeRenderer(int(cell_size - int(cell_size*.20)), int(cell_size*.20))
     print(renderer)
     renderer.draw(image, maze.two_dimensional_cell_grid)
-    canvas.present(image)
+    print(viewport.mlx_ptr, context.mlx_ptr)
+    print(viewport.viewport_ptr)
+
+    context._mlxbinding.mlx_put_image_to_window(
+                viewport.mlx_ptr,
+                viewport.viewport_ptr,
+                image.img_ptr,
+                0,
+                0
+            )
+    # viewport.add_img(image)
 
     #print(maze.two_dimensional_cell_grid[0][0])
     def gere_close_1(context):
-        context.mlx.mlx_loop_exit(context.mlx_ptr)
-    context.mlx.mlx_hook(canvas._win, 33, 0, gere_close_1, context)
-    def update_frame(context):
-        global frame
-        # clear or modify image
-        image.clear()
-        colors = [0x0000FF00, 0x5500FF00, 0xAA00FF00, 0xDD00FF00, 0xFF00FF00]
-        # draw something changing with frame
-        value = frame % 5
-        renderer.draw(image, cell_size, {"fortytwo": colors[value]})
+        context.mlxbinding.mlx_loop_exit(context.mlx_ptr)
+    context.mlxbinding.mlx_hook(viewport.viewport_ptr, 33, 0, gere_close_1, context)
+    # def update_frame(context):
+    #     global frame
+    #     # clear or modify image
+    #     image.clear()
+    #     colors = [0x0000FF00, 0x5500FF00, 0xAA00FF00, 0xDD00FF00, 0xFF00FF00]
+    #     # draw something changing with frame
+    #     value = frame % 5
+    #     renderer.draw(image, cell_size, {"fortytwo": colors[value]})
         
-        # push to window
-        canvas.present(image)
+    #     # push to window
+    #     canvas.present(image)
         
-        # increment frame counter
-        frame += 1
-        return 0  # important for mlx_loop_hook in MLX
-    context.mlx.mlx_loop_hook(context.mlx_ptr, update_frame, context)
-    context.create_loop()
-    context.destroy_window(canvas._win)
+    #     # increment frame counter
+    #     frame += 1
+    #     return 0  # important for mlx_loop_hook in MLX
+    # context.mlx.mlx_loop_hook(context.mlx_ptr, update_frame, context)
+    context.mlxbinding.mlx_loop(context.mlx_ptr)
+    context.destroy_window(viewport.viewport_ptr)
 
 
 

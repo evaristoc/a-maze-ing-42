@@ -1,8 +1,7 @@
 import sys
-from .MlxContext import MlxContext
-from .Image import Image
+from src.renderer.Image import Image
 
-class ViewPort:
+class Viewport():
     _viewportptr: int
     _height : int
     _width : int
@@ -11,6 +10,7 @@ class ViewPort:
     title : str
     def __init__(self) -> None:
         self._viewportptr = 0
+        self._mlx_ptr = 0
         self.height = 0
         self.width = 0
         self.title = ""
@@ -36,6 +36,10 @@ class ViewPort:
     @property
     def context(self) -> None:
         return self._context
+    
+    @property
+    def mlx_ptr(self) -> None:
+        return self._mlx_ptr
 
     @property
     def imgbuffer(self) -> None:
@@ -45,25 +49,29 @@ class ViewPort:
     def viewport_ptr(self, ptr: int) -> None:
         self._viewportptr = ptr
 
-    @property
+    @height.setter
     def height(self, h: int) -> None:
         self._height = h
 
-    @property
+    @width.setter
     def width(self, w: int) -> None:
         self._width = w
 
-    @property
+    @title.setter
     def title(self, t: str) -> None:
         self._title = t
 
-    @property
-    def context(self, context: Mlx) -> None:
+    @context.setter
+    def context(self, context: any) -> None:
         self._context = context
 
-    @property
+    @context.setter
     def imgbuffer(self, img: Image) -> None:
         self._main_buffer = img
+
+    @mlx_ptr.setter
+    def mlx_ptr(self, mlx_ptr) -> None:
+        self._mlx_ptr = mlx_ptr
 
     ## for buffering a single, modifiable image
     def add_img(self, image) -> None:
@@ -72,10 +80,10 @@ class ViewPort:
             raise Exception("Image can not be null")
         if not self._context:
             raise Exception("There is no context associated to this window/viewport")
-        backend = self._context.mlxbackend
-        mlx_pointer = self._context.mlx_ptr
-        self._main_buffer = self.backend.mlx_put_image_to_window(
-            self.mlx_pointer,
+        backend = self._context
+        mlx_pointer = self._mlx_ptr
+        self._main_buffer = backend.mlx_put_image_to_window(
+            mlx_pointer,
             self._viewportptr,
             image.img_ptr,
             0,

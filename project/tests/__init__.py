@@ -11,11 +11,11 @@ from src import write_hexadecimal_map_to_file
 
 from src import MazeSolver, SinglePathSolver, AllPathsSolver
 
-from src.renderer import MlxContext, Canvas, MlxImageBuffer, MazeRenderer
+from src.renderer import MlxContext, Viewport, ImageBuffer, MazeRenderer
 
 __all__ = ["ConfigParser", "ConfigError", "Cell",
            "FourtyTwoCell", "ExitCell", "EntryCell", "Maze",
-           "write_hexadecimal_map_to_file", "MlxContext", "Canvas",
-           "MlxImageBuffer", "MazeRenderer",
+           "write_hexadecimal_map_to_file", "MlxContext", "Viewport",
+           "ImageBuffer", "MazeRenderer",
            "write_hexadecimal_map_to_file",
            "MazeSolver", "SinglePathSolver", "AllPathsSolver"]
