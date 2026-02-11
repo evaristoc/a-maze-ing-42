@@ -1,8 +1,10 @@
 """
 TODO
-- reset the optimizations (walls, background) to be more cell based
-- include a hall drawer
-- prepare for the use of triangles to indicate path
+- [ ] reset the optimizations (walls, background) to be more cell based
+- [ ] include a hall drawer
+- [ ] prepare for the use of triangles to indicate path
+- [ ] refine the use of padding for the hall painting (use options instead of a single color arg)
+- [ ] evaluate the use of generators for a better control of streams
 """
 
 
@@ -89,64 +91,45 @@ class MazeRenderer(Renderer):
             for dx in range(interior_size):
                 target_img.put_pixel(start_x + dx, start_y + dy, color)
 
-def __draw_cell_interior(self, target_img, x_cell: int, y_cell: int, color: int):
-    # 1. Calculate Logical Start Coordinates
-    start_x = self.wall_thickness + x_cell * (self.cell_size + self.wall_thickness) + self.padding
-    start_y = self.wall_thickness + y_cell * (self.cell_size + self.wall_thickness) + self.padding
-    interior_size = self.cell_size - 2 * self.padding
 
-    # 2. Pre-calculate the absolute starting byte offset
-    # This is the ONLY time we do the full coordinate math.
-    base_offset = (start_y * target_img.sl) + (start_x * 4)
+    def __cell_walls(self, target_img, x_cell: int, y_cell: int, cell, color: int):
+        #TODO find a solution when x_cell and y_cell are 0 for cell north and west
 
-    for dy in range(interior_size):
-        # 3. Jump to the start of the current row using the stride
-        row_ptr = base_offset + (dy * target_img.sl)
-        
-        for dx in range(interior_size):
-            # 4. Direct memory write using the offset
-            # We add (dx * 4) to move across the row 4 bytes at a time
-            target_img.set_pixel_at_offset(row_ptr + (dx * 4), color)
+        start_x = x_cell * (self.cell_size + self.wall_thickness)
+        start_y = y_cell * (self.cell_size + self.wall_thickness)
 
-    def __draw_cells():
-        for cell in __get_safe_cell_anchors(target, len(state[0]), len(state), wall_thick, padding, cell_size)
-            __draw_cell_interior(self, target_img, x_cells: int, y_cells: int, color: int)
+        if cell.has_north_wall(): # this DIFFERENT
+            # we need to move to the very top left to cover all the space; it is like a full line
+            wall_y = start_y - self.wall_thickness
+            wall_x = start_x - self.wall_thickness
+            for dx in range(self.cell_size + 2 * self.wall_thickness): # width (has to cover not 1 but two walls)
+                for dy in range(self.wall_thickness): # height (just one wall)
+                    target_img.put_pixel(wall_x + dx, wall_y + dy, color)
 
-    # def _fortytwo(self, target_img: any, state: any, color: int):
-    #     """
-    #     Draw all FortyTwo cells in the maze.
-    #     Each cell is n x n pixels:
-    #     - walls included
-    #     - interior: (n-wallstroke-padding) x (n-wallstroke-padding) pixels
-    #     - padding: padding (px) from top-left corner of cell
-    #     """
-    #     cell_size = self.cell_size
-    #     padding = self.padding
-    #     interior_size = cell_size - padding - self.wall_stroke * 2
+        if cell.has_west_wall():
+            wall_x = start_x - self.wall_thickness # walk left
+            for dx in range(self.wall_thickness): # this is the wall width
+                for dy in range(self.cell_size + self.wall_thickness): # this is the wall height
+                    target_img.put_pixel(wall_x + dx, start_y + dy, color) # paint between range witdh and start height
+            
+        # East wall (vertical)
+        if cell.has_east_wall():
+            wall_x = start_x + self.cell_size # walk right
+            for dx in range(self.wall_thickness): # this is the wall width
+                for dy in range(self.cell_size + self.wall_thickness): # this is the wall height
+                    target_img.put_pixel(wall_x + dx, start_y + dy, color) # paint between range width and start height
 
-    #     # Iterate over all cells in the maze
-    #     for y, row in enumerate(state):
-    #         for x, cell in enumerate(row):
-    #             if not isinstance(cell, FourtyTwoCell):
-    #                 continue
-
-    #             # Calculate top-left corner of the cell in pixels
-    #             start_x = x * cell_size + padding
-    #             start_y = y * cell_size + padding
-
-    #             # Paint interior
-    #             for dy in range(interior_size):
-    #                 for dx in range(interior_size):
-    #                     px = start_x + dx
-    #                     py = start_y + dy
-    #                     #print("inside fortytwo")
-    #                     target_img.put_pixel(px, py, color)
-
+        # South wall (horizontal)
+        if cell.has_south_wall():
+            wall_y = start_y + self.cell_size # walk down
+            for dy in range(self.wall_thickness): # this is the the wall height
+                for dx in range(self.cell_size + self.wall_thickness): # this is the wall width
+                    target_img.put_pixel(start_x + dx, wall_y + dy, color) # paint between start width and range height
 
     def __eastsouth_cell_walls(self, target_img, x_cell: int, y_cell: int, cell, color: int):
         start_x = x_cell * (self.cell_size + self.wall_thickness)
         start_y = y_cell * (self.cell_size + self.wall_thickness)
-
+            
         # East wall (vertical)
         if cell.has_east_wall():
             wall_x = start_x + self.cell_size
@@ -156,10 +139,10 @@ def __draw_cell_interior(self, target_img, x_cell: int, y_cell: int, color: int)
 
         # South wall (horizontal)
         if cell.has_south_wall():
-            wall_y = base_y + self.cell_size
+            wall_y = start_y + self.cell_size
             for dy in range(self.wall_thickness):
                 for dx in range(self.cell_size + self.wall_thickness):
-                    target_img.put_pixel(base_x + dx, wall_y + dy, color)
+                    target_img.put_pixel(start_x + dx, wall_y + dy, color)
 
    def __topleft_borders(self, target_img, state, color):
         """
@@ -208,6 +191,29 @@ def __draw_cell_interior(self, target_img, x_cell: int, y_cell: int, color: int)
                 if (row_mem + (cell_size * sl)) > max_mem:
                     break
                 yield (row_mem, col_mem)
+
+def __draw_cell_interior(self, target_img, x_cell: int, y_cell: int, color: int):
+    # 1. Calculate Logical Start Coordinates
+    start_x = self.wall_thickness + x_cell * (self.cell_size + self.wall_thickness) + self.padding
+    start_y = self.wall_thickness + y_cell * (self.cell_size + self.wall_thickness) + self.padding
+    interior_size = self.cell_size - 2 * self.padding
+
+    # 2. Pre-calculate the absolute starting byte offset
+    # This is the ONLY time we do the full coordinate math.
+    base_offset = (start_y * target_img.sl) + (start_x * 4)
+
+    for dy in range(interior_size):
+        # 3. Jump to the start of the current row using the stride
+        row_ptr = base_offset + (dy * target_img.sl)
+        
+        for dx in range(interior_size):
+            # 4. Direct memory write using the offset
+            # We add (dx * 4) to move across the row 4 bytes at a time
+            target_img.set_pixel_at_offset(row_ptr + (dx * 4), color)
+
+    def __draw_cells():
+        for cell in __get_safe_cell_anchors(target, len(state[0]), len(state), wall_thick, padding, cell_size)
+            __draw_cell_interior(self, target_img, x_cells: int, y_cells: int, color: int)
 
     # def _walls(self, target_img, state, color):
     #     for y, row in enumerate(state):
