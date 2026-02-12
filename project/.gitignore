@@ -3,8 +3,15 @@
 
 # external libs
 # minilibx
-mlx_CLXV/
+mlx_CLXV*/
+
+#cached python
+*__pycache__*
+*.pyc
 
 #log files
 *.egg-info/
+
+#created wheels
+mlx-2.2-py3-none-manylinux1_x86_64.whl
 map_output.txt
