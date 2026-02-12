@@ -5,6 +5,7 @@
 # - [ ] prepare for the use of triangles to indicate path
 # - [x] refine the use of padding for the hall painting (use options instead of a single color arg)
 # - [ ] evaluate the use of generators for a better control of streams
+# - [x] move calculation of pix_tot_w and pix_tot_h outside the renderer as it is already required before the viewport is made
 # - [-] cell renderer class?
 # - [x] solve the origin issue, probably moving everything to the very top left corner?
 # - [-] treating the whole wall as a single block instead of separated walls? Facilitate animations and pattern strokes
@@ -42,9 +43,11 @@ class MazeRenderer(Renderer):
         print("renderer: successfully instantiated; set maze rendering properties")
 
     def draw(self,
-    target_img: any,
-    state: any,
-    elements: dict[str, int] = None) -> None:
+    target_img: Image,
+    elements: dict[str, int] = None,
+    state: list,
+    tot_w: int = -1,
+    tot_h: int = -1) -> None:
     # """
     # - background will paint all the image, including under walls, with a single color (not led by cell)
     # - fortytwo, entrance and exit will paint a padded interior (led by cell)
@@ -55,8 +58,8 @@ class MazeRenderer(Renderer):
     # """
         elements = elements or self.DEFAULT_COLORS
         # we paint everything with background if background (almost like clearing)
-        if "background" in elements:
-            self.__draw_background(target_img, state, elements["background"])    
+        if "background" in elements and tot_w != -1 and tot_h != -1:
+            self.__draw_all_background(target_img, state, elements["background"], tot_w, tot_h)    
         for r in state:
             for c in r:
                 # let's paint the walls already...
@@ -77,14 +80,7 @@ class MazeRenderer(Renderer):
                 if "hall" in elements:
                     self.__draw_cell_interior(target_img, c, elements["background"])
 
-    def __get_total_size(self, num_cells_x: int, num_cells_y: int): # utils
-        total_w = num_cells_x * self.__total_cell_size - self.__wall_thickness * (num_cells_x - 1)
-        total_h = num_cells_y * self.__total_cell_size - self.__wall_thickness * (num_cells_y - 1)
-        return total_w, total_h
-
-
-    def __draw_background(self, target_img: Image, state: list, color: int) -> None:
-        pix_tot_w, pix_tot_h = self.__get_total_size(len(state[0]), len(state))
+    def __draw_all_background(self, target_img: Image, state: list, color: int, pix_tot_w: int, pix_tot_h: int) -> None:
         for y in range(pix_tot_h):
             for x in range(pix_tot_w):
                 target_img.put_pixel(x, y, color)
