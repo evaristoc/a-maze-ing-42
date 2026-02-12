@@ -48,30 +48,46 @@ class MlxContext:
             viewport.width = w
             viewport.title = title
             viewport.mlx_ptr = self.mlx_ptr
-            viewport.context = self._mlxbinding #to add to viewport the ability to eventually add images
+            viewport.p_binding = self._mlxbinding #to add to viewport the ability to eventually add images
             if not viewport.viewport_ptr:
                 raise Exception(f"Can't create {title} viewport")
         except Exception as e:
-            print(f"Error: viewport raised: {e}", file=sys.stderr)
+            print(f"Error: context at create viewport raised: {e}", file=sys.stderr)
             sys.exit(1)
+        print(f"context: viewport {viewport.mlx_ptr} successfully created")
         return viewport
 
     def create_new_image(self, Img_Class: Image, w: int, h: int) -> Image:
         img = Img_Class()
-        img.img_ptr = self.mlxbinding.mlx_new_image(self.mlx_ptr, w, h)
-        #TODO error handing
-        img.width = w
-        img.height = h
-        img.data, img.bytes_per_pixel, img.stride, img.endian = \
-        self.mlxbinding.mlx_get_data_addr(img.img_ptr)
+        try:
+            img.img_ptr = self.mlxbinding.mlx_new_image(self.mlx_ptr, w, h)
+            img.width = w
+            img.height = h
+            img.data, img.bytes_per_pixel, img.stride, img.endian = \
+            self.mlxbinding.mlx_get_data_addr(img.img_ptr)
+            if not img.data:
+                raise Exception(f"Can't create image data")
+        except Exception as e:
+            print(f"Error: context at create image raised: {e}", file=sys.stderr)
+            sys.exit(1)
+        print(f"context: image {img.img_ptr} successfully created")
         return img
     
     def start_loop(self):
-        self.mlxbinding.mlx_loop(self.mlx_ptr)
+        try:
+            print("Starting the mlx loop...")
+            self.mlxbinding.mlx_loop(self.mlx_ptr)
+        except Exception as e:
+            print(f"Error: context at start loop raised: {e}", file=sys.stderr)
+            sys.exit(1)         
 
     def destroy_window(self, viewport_ptr: any):
-        self.mlxbinding.mlx_destroy_window(self.mlx_ptr, viewport_ptr)
-    
+        try:
+            print("Destroying window")
+            self.mlxbinding.mlx_destroy_window(self.mlx_ptr, viewport_ptr)
+        except Exception as e:
+            print(f"Error: context at destroy window raised: {e}", file=sys.stderr)
+            sys.exit(1)            
     def destroy_image():
         #TODO
         pass

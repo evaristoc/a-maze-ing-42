@@ -87,6 +87,7 @@ class Image():
 
     #same as above but simpler
     def clear(self, color: int = 0x00000000):
+        print(f"image: clearing image {self.img_ptr}")
         pixel_count = self.width * self.height
         self._data[:] = (color.to_bytes(4, byteorder="little")) * pixel_count
 

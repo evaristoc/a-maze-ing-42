@@ -5,7 +5,7 @@ class Viewport():
     _viewportptr: int
     _height : int
     _width : int
-    _context : int
+    _binding : int
     _main_buffer : any
     title : str
     def __init__(self) -> None:
@@ -14,7 +14,7 @@ class Viewport():
         self.height = 0
         self.width = 0
         self.title = ""
-        self._context = None
+        self._binding = None
         self._main_buffer = None
 
     @property
@@ -34,8 +34,8 @@ class Viewport():
         return self._title
 
     @property
-    def context(self) -> None:
-        return self._context
+    def p_binding(self) -> None:
+        return self._binding
     
     @property
     def mlx_ptr(self) -> None:
@@ -61,11 +61,11 @@ class Viewport():
     def title(self, t: str) -> None:
         self._title = t
 
-    @context.setter
-    def context(self, context: any) -> None:
-        self._context = context
+    @p_binding.setter
+    def p_binding(self, binding: any) -> None:
+        self._binding = binding
 
-    @context.setter
+    @imgbuffer.setter
     def imgbuffer(self, img: Image) -> None:
         self._main_buffer = img
 
@@ -74,20 +74,25 @@ class Viewport():
         self._mlx_ptr = mlx_ptr
 
     ## for buffering a single, modifiable image
-    def add_img(self, image) -> None:
-        #TODO
+    def add_img(self, image: Image) -> None:
         if not image:
-            raise Exception("Image can not be null")
-        if not self._context:
+            raise Exception("Added image can not be null")
+        if not self._binding:
             raise Exception("There is no context associated to this window/viewport")
-        backend = self._context
+        binding = self._binding
         mlx_pointer = self._mlx_ptr
-        self._main_buffer = backend.mlx_put_image_to_window(
-            mlx_pointer,
-            self._viewportptr,
-            image.img_ptr,
-            0,
-            0
-        )
-        if not self._main_buffer:
-            raise Exception("Can't add image to viewport")
+        try:
+            binding.mlx_put_image_to_window(
+                mlx_pointer,
+                self._viewportptr,
+                image.img_ptr,
+                0,
+                0
+            )
+            self._main_buffer = image
+            if not self._main_buffer:
+                raise Exception("Can't add image to viewport")
+        except Exception as e:
+            print(f"Error: viewporrt at add img raised: {e}", file=sys.stderr)
+            sys.exit(1)
+        print(f"viewport: image {image.img_ptr} successfully added")
