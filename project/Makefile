@@ -1,7 +1,7 @@
 # Define the path to the virtual environment's python/pip 
-VENV = .venv 
+VENV = .venv
 PYTHON = $(VENV)/bin/python3 
-PIP = $(VENV)/bin/pip 
+PIP := $(VENV)/bin/pip 
 
 .PHONY: all install-deps install run debug lint clean 
 # Setup virtual environment and dependencies 
@@ -9,7 +9,10 @@ install: $(VENV)/bin/activate install-deps
 
 $(VENV)/bin/activate: 
 	@test -d $(VENV) || (echo "Creating .venv..." && python3 -m venv $(VENV)) 
-	.venv/bin/pip install --upgrade pip 
+	@test -f $(VENV)/bin/pip || $(VENV)/bin/python -m ensurepip
+	@test -f $(VENV)/bin/pip || ln -s $(VENV)/bin/pip3 $(VENV)/bin/pip
+	$(VENV)/bin/pip install --upgrade pip 
+	@touch $(VENV)/bin/activate
 	@echo "Virtual environment ready." 
 	
 # Install dependencies and MiniLibX 
