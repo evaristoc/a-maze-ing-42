@@ -37,7 +37,7 @@ def main() -> None:
 
     # maze.randomly_remove_some_walls(0.6)
     context = MlxContext(mlx.Mlx())
-    cell_size = 50
+    cell_size = 60
     img_width = cell_size * maze_width - (maze_width - 1) * int(cell_size * .2) # important, but precalculated in advance...
     img_height = cell_size * maze_height - (maze_height - 1) * int(cell_size * .2) # important, but precalculated in advance...
     viewport = context.create_new_viewport(img_width, img_height, "maze test")

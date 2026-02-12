@@ -72,6 +72,7 @@ class MazeRenderer(Renderer):
                     self.__draw_cell_interior(target_img, c.cell_position_x, c.cell_position_y, elements["entrance"])
                 if "exit" in elements and isinstance(c, ExitCell):
                     self.__draw_cell_interior(target_img, c.cell_position_x, c.cell_position_y, elements["exit"])
+                self.__draw_triangle_in_cell(target_img, 4, 4, 0xFFFFFFFF, "right")
                 # if "path" in elements:
                 #     self._path(target_img, state, elements["path"])
 
@@ -129,4 +130,75 @@ class MazeRenderer(Renderer):
                 for dx in range(self.__total_cell_size): # this is the wall width
                     target_img.put_pixel(start_x + dx, wall_y + dy, color) # paint between start width and range height
 
+    def __draw_filled_triangle(self, img, x1, y1, x2, y2, x3, y3, color):
+        min_y = min(y1, y2, y3)
+        max_y = max(y1, y2, y3)
+
+        for y in range(min_y, max_y + 1):
+            intersections = []
+
+            # check edge 1
+            if y1 != y2 and min(y1, y2) <= y <= max(y1, y2):
+                x = x1 + (x2 - x1) * (y - y1) // (y2 - y1)
+                intersections.append(x)
+
+            # check edge 2
+            if y2 != y3 and min(y2, y3) <= y <= max(y2, y3):
+                x = x2 + (x3 - x2) * (y - y2) // (y3 - y2)
+                intersections.append(x)
+
+            # check edge 3
+            if y3 != y1 and min(y3, y1) <= y <= max(y3, y1):
+                x = x3 + (x1 - x3) * (y - y3) // (y1 - y3)
+                intersections.append(x)
+
+            if len(intersections) == 2:
+                x_start = min(intersections)
+                x_end = max(intersections)
+
+                for x in range(x_start, x_end + 1):
+                    img.put_pixel(x, y, color)
    
+    def __draw_triangle_in_cell(self, img, x_cell, y_cell, color, direction):
+
+        start_x = self.__wall_thickness + x_cell * \
+            (self.__interior_cell_size + self.__wall_thickness) + self.__padding
+
+        start_y = self.__wall_thickness + y_cell * \
+            (self.__interior_cell_size + self.__wall_thickness) + self.__padding
+
+        size = self.__interior_cell_size
+        margin = size // 5
+
+        left = start_x + margin
+        right = start_x + size - margin
+        top = start_y + margin
+        bottom = start_y + size - margin
+        #bottom = start_y + size
+        center_x = start_x + size // 2
+        center_y = start_y + size // 2
+
+        if direction == "up":
+            x1, y1 = center_x, top
+            x2, y2 = left, bottom
+            x3, y3 = right, bottom
+
+        elif direction == "down":
+            x1, y1 = center_x, bottom
+            x2, y2 = left, top
+            x3, y3 = right, top
+
+        elif direction == "left":
+            x1, y1 = left, center_y
+            x2, y2 = right, top
+            x3, y3 = right, bottom
+
+        elif direction == "right":
+            x1, y1 = right, center_y
+            x2, y2 = left, top
+            x3, y3 = left, bottom
+
+        else:
+            return
+
+        self.__draw_filled_triangle(img, x1, y1, x2, y2, x3, y3, color)
