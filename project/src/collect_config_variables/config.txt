@@ -6,7 +6,7 @@
 # PERFECT is a boolean, representing if the maze will have only one possible solution (True) or more possible solutions (False).
 
 WIDTH=20
-HEIGHT=15
+HEIGHT=20
 ENTRY=0,0
 EXIT=19,14
 OUTPUT_FILE=maze.txt

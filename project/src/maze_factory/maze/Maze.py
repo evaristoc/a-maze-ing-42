@@ -3,6 +3,7 @@ from src.maze_factory.cells import (Cell, ExitCell,
 # from collect_config_variables import ConfigParser
 import random
 from abc import ABC
+from src.collect_config_variables.error_handlers.config_errors import ConfigError
 
 
 FOURTY_TWO_GLYPH = [
