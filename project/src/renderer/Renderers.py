@@ -44,10 +44,9 @@ class MazeRenderer(Renderer):
 
     def draw(self,
     target_img: Image,
-    elements: dict[str, int] = None,
     state: list,
-    tot_w: int = -1,
-    tot_h: int = -1) -> None:
+    elements: dict[str, int] = None
+    ) -> None:
     # """
     # - background will paint all the image, including under walls, with a single color (not led by cell)
     # - fortytwo, entrance and exit will paint a padded interior (led by cell)
@@ -58,8 +57,8 @@ class MazeRenderer(Renderer):
     # """
         elements = elements or self.DEFAULT_COLORS
         # we paint everything with background if background (almost like clearing)
-        if "background" in elements and tot_w != -1 and tot_h != -1:
-            self.__draw_all_background(target_img, state, elements["background"], tot_w, tot_h)    
+        if "background" in elements:
+            self.__draw_all_background(target_img, state, elements["background"])    
         for r in state:
             for c in r:
                 # let's paint the walls already...
@@ -75,12 +74,18 @@ class MazeRenderer(Renderer):
                     self.__draw_cell_interior(target_img, c, elements["entrance"])
                 if "exit" in elements and isinstance(c, ExitCell):
                     self.__draw_cell_interior(target_img, c, elements["exit"])
-                if "path" in elements:
-                    self.__draw_triangle_in_cell(target_img, 4, 4, 0xFFFFFFFF, "right")
-                if "hall" in elements:
-                    self.__draw_cell_interior(target_img, c, elements["background"])
+                # if "path" in elements:
+                #     self.__draw_triangle_in_cell(target_img, c, 0xFFFFFFFF, "right")
+                # if "hall" in elements:
+                #     self.__draw_cell_interior(target_img, c, elements["background"])
 
-    def __draw_all_background(self, target_img: Image, state: list, color: int, pix_tot_w: int, pix_tot_h: int) -> None:
+    def __get_total_size(self, num_cells_x: int, num_cells_y: int): # utils
+        total_w = num_cells_x * self.__total_cell_size - self.__wall_thickness * (num_cells_x - 1)
+        total_h = num_cells_y * self.__total_cell_size - self.__wall_thickness * (num_cells_y - 1)
+        return total_w, total_h
+
+    def __draw_all_background(self, target_img: Image, state: list, color: int) -> None:
+        pix_tot_w, pix_tot_h = self.__get_total_size(len(state[0]), len(state))
         for y in range(pix_tot_h):
             for x in range(pix_tot_w):
                 target_img.put_pixel(x, y, color)
@@ -93,7 +98,7 @@ class MazeRenderer(Renderer):
         y_cell = cell.cell_position_y
         x_area = 0
         y_area = 0
-        if isinstance(cell, FourtyTwo):
+        if isinstance(cell, FourtyTwoCell):
             start_x = self.__wall_thickness + x_cell * (self.__interior_cell_size + self.__wall_thickness) + 2 * self.__padding
             start_y = self.__wall_thickness + y_cell * (self.__interior_cell_size + self.__wall_thickness) + 2 * self.__padding
             x_area = self.__cell_center

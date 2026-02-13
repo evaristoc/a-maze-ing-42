@@ -105,7 +105,7 @@ class Image():
     # Casting into memoryview allows python to be closer to low level by writing directly to raw memory address!!! (Gemini)
     def set_data(self, raw_data: list) -> None:
         # We wrap the pointer in a memoryview
-        self._data = memoryview(raw_ptr).cast('B') # Raw bytes
+        self._data = memoryview(raw_data).cast('B') # Raw bytes
         # This is the secret: a view that treats the buffer as 32-bit integers
         self._int_view = self._data.cast('I')
 

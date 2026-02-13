@@ -2,6 +2,7 @@ from tests import Maze, ConfigError, ConfigParser
 import mlx
 from tests import MlxContext, ImageBuffer, MazeRenderer
 from tests import write_hexadecimal_map_to_file
+from tests import loop_animations
 import sys
 
 # Pick a seed, just a random number, fill in the config file in project.
@@ -44,8 +45,9 @@ def main() -> None:
     image = context.create_new_image(ImageBuffer, img_width, img_height)
     #image.clear()
     renderer = MazeRenderer(cell_size)
-    renderer.draw(image, maze.two_dimensional_cell_grid)
-    viewport.add_img(image)
+    #renderer.draw(image, maze.two_dimensional_cell_grid)
+    #viewport.add_img(image)
+    context.renderer_queue = ["background", "walls", "doors"]
     def gere_close_1(context):
         try:
             print("Exiting the mlx loop...")
@@ -54,8 +56,9 @@ def main() -> None:
             print(f"Error: context at destroy window raised: {e}", file=sys.stderr)
             sys.exit(1) 
     context.mlxbinding.mlx_hook(viewport.viewport_ptr, 33, 0, gere_close_1, context)
+    context.mlxbinding.mlx_loop_hook(context.mlx_ptr, loop_animations, [context, viewport, renderer, maze.two_dimensional_cell_grid])
     context.start_loop()
-    context.destroy_window(viewport.viewport_ptr)
+    context.destroy_viewport(viewport.viewport_ptr)
 
 if __name__ == "__main__":
     main()

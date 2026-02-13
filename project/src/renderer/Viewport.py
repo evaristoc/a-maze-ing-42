@@ -1,5 +1,6 @@
 import sys
 from src.renderer.Image import Image
+import mlx
 
 class Viewport():
     _viewportptr: int
@@ -54,18 +55,18 @@ class Viewport():
         self._mlx_ptr = mlx_ptr
 
     ## for buffering a single, modifiable image
-    def add_img(self, img_ptr: int, x: int = 0, y: int = 0) -> None:
-        if not img_ptr or not mxl_pointer:
+    def add_img(self, img: Image, x: int = 0, y: int = 0) -> None:
+        if not img:
             raise Exception("pointers to img / context required")
         try:
-            mlx.Mlx().mlx.mlx_put_image_to_window(
+            mlx.Mlx().mlx_put_image_to_window(
                 self._mlx_ptr,
                 self._viewportptr,
-                img_ptr,
+                img.img_ptr,
                 x,
                 y
             )
         except Exception as e:
             print(f"Error: viewporrt at add img raised: {e}", file=sys.stderr)
             sys.exit(1)
-        print(f"viewport: image {img_ptr} successfully added")
+        print(f"viewport: image {img.img_ptr} successfully added")

@@ -9,7 +9,8 @@ class MlxContext:
     # mlxbinding.mlx == mlxbackend
     # mlxbinding.mlx.mlx_ptr == mlx_ptr (pointer to the running MiniLibX backend)
     # """"
-    img_assets: Image
+    _img_assets: Image
+    _renderer_queue: list
     def __init__(self, mlx_binding: any) -> None:
         try:
             # the minilibx is instantiated
@@ -21,6 +22,7 @@ class MlxContext:
         except Exception as e:
             print(f"Error: Can't initialize MLX: {e}", file=sys.stderr)
             sys.exit(1)
+        self.counter = 0
 
     @property
     def mlxbinding(self) -> any:
@@ -32,7 +34,16 @@ class MlxContext:
 
     @property
     def img_asset(self) -> Image:
-        return self.img_assets
+        return self._img_assets
+
+    @property
+    def renderer_queue(self) -> list:
+        return self._renderer_queue
+
+    @renderer_queue.setter
+    def renderer_queue(self, rend_q: list = []) -> None:
+        self._renderer_queue = rend_q
+
 
     def get_size(self) -> tuple:
         return self.mlxbinding.get_screen_size(self.mlx_ptr)
@@ -65,15 +76,14 @@ class MlxContext:
             img.height = h
             raw_data, img.bytes_per_pixel, img.stride, img.endian = \
             self.mlxbinding.mlx_get_data_addr(img.img_ptr)
-            if not img.data:
+            if not raw_data:
                 raise Exception(f"Can't create image data")
         except Exception as e:
             print(f"Error: context at create image raised: {e}", file=sys.stderr)
             sys.exit(1)
         print(f"context: image {img.img_ptr} successfully created")
-        if img.img_ptr not in self.img_assets:
-            self.img_assets = img
         img.set_data(raw_data) #casting to memoryview!!!
+        self._img_assets = img
         return img
     
     def start_loop(self):
