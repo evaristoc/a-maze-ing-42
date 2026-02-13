@@ -27,9 +27,9 @@ def write_hexadecimal_map_to_file(
     with open(output_file_path, "w", encoding="utf-8") as file:
 
         # ─── HEX MAP ─────────────────────────────
-        file.write("HEX MAP\n")
         for row in maze.get_hexadecimal_wall_map():
-            file.write(" ".join(row) + "\n")
+            file.write("".join(row) + "\n")
+        file.write("\nHEXADECIMAL MAP\n")
 
         file.write(f"\nENTRY:\t{entry_coords}\n".expandtabs(8))
         file.write(f"EXIT:\t{exit_coords}\n".expandtabs(8))
