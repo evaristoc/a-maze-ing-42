@@ -2,7 +2,7 @@ from tests import Maze, ConfigError, ConfigParser
 import mlx
 from tests import MlxContext, ImageBuffer, MazeRenderer
 from tests import write_hexadecimal_map_to_file
-from tests import loop_animations
+from tests import loop_handler, close_viewport_handler
 import sys
 
 # Pick a seed, just a random number, fill in the config file in project.
@@ -47,16 +47,29 @@ def main() -> None:
     renderer = MazeRenderer(cell_size)
     #renderer.draw(image, maze.two_dimensional_cell_grid)
     #viewport.add_img(image)
-    context.renderer_queue = ["background", "walls", "doors"]
-    def gere_close_1(context):
-        try:
-            print("Exiting the mlx loop...")
-            context.mlxbinding.mlx_loop_exit(context.mlx_ptr)
-        except Exception as e:
-            print(f"Error: context at destroy window raised: {e}", file=sys.stderr)
-            sys.exit(1) 
-    context.mlxbinding.mlx_hook(viewport.viewport_ptr, 33, 0, gere_close_1, context)
-    context.mlxbinding.mlx_loop_hook(context.mlx_ptr, loop_animations, [context, viewport, renderer, maze.two_dimensional_cell_grid])
+    renderer.renderer_queue = ["background", "walls", "doors"]
+    renderer.animations = {
+        "global":{
+            "frame_count": 0
+        },
+        "elements":
+            {"background":{
+                "target": maze.two_dimensional_cell_grid,
+                "color": 0
+            },
+            {"fourtytwo":{
+                "target": [cell for rows in maze.two_dimensional_cell_grid for cell in rows if isinstance(cell, FourtyTwoCell)],
+                "in_color": 0
+            },
+            {"walls":{
+                "target": [yield cell for rows in maze.two_dimensional_cell_grid for cell in rows if not isinstance(cell, FourtyTwoCell)],
+                "in_color": 0
+            },
+        }
+    }
+
+    context.mlxbinding.mlx_hook(viewport.viewport_ptr, 33, 0, close_viewport_handler, viewport.viewport_ptr)
+    context.mlxbinding.mlx_loop_hook(context.mlx_ptr, loop_animations, [context, viewport, renderer])
     context.start_loop()
     context.destroy_viewport(viewport.viewport_ptr)
 

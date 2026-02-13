@@ -1,4 +1,5 @@
 import mlx
+import Type from typing
 
 def loop_handler(params: list) -> None:
     context, viewport, renderer, target = params
@@ -21,6 +22,14 @@ def loop_handler(params: list) -> None:
         renderer.draw(context.img_asset, target, {"entrance": 0xFF00FF00, "exit": 0xFFFF00FF})
         context.renderer_queue.pop(0)
     viewport.add_img(context.img_asset)
-    return 0 
+    return 0
+
+def close_viewport_handler(mlx_ptr: int) -> None:
+    try:
+        print("Exiting the mlx loop...")
+        mlx.Mlx().mlx_loop_exit(mlx_ptr)
+    except Exception as e:
+        print(f"Error: context at destroy window raised: {e}", file=sys.stderr)
+        sys.exit(1) 
 
 
