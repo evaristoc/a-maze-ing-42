@@ -65,12 +65,12 @@ class ConfigParser:
                 raise ConfigError(f"Missing configuration keys: "
                                   f"{', '.join(sorted(missing))}")
             width = ConfigParser._parse_positive_int(values["WIDTH"], "WIDTH")
-            if width < 2:
-                raise ConfigError("width must be bigger than one.")
+            if width < 5:
+                raise ConfigError("width must be bigger than four.")
             height = ConfigParser._parse_positive_int(values["HEIGHT"],
                                                       "HEIGHT")
-            if height < 2:
-                raise ConfigError("height must be bigger than one.")
+            if height < 5:
+                raise ConfigError("height must be bigger than four.")
             entry = ConfigParser._parse_coordinates(values["ENTRY"], "ENTRY")
             exit_ = ConfigParser._parse_coordinates(values["EXIT"], "EXIT")
             seed = ConfigParser._parse_positive_int(values["SEED"], "SEED")
