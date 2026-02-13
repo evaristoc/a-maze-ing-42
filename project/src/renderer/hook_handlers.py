@@ -1,6 +1,6 @@
 import mlx
 
-def loop_animations(params: list) -> None:
+def loop_handler(params: list) -> None:
     context, viewport, renderer, target = params
     if not context.renderer_queue:
         # Optimization: We still put the image to keep the window alive/responsive

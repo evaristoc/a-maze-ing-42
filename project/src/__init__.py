@@ -13,7 +13,7 @@ from .maze_path_generators import (MazePathGenerator,
                                    SimpleMazeGenerator,
                                    PerfectMazeDFSGenerator)
 
-from .renderer import (MlxContext, Viewport, ImageBuffer, MazeRenderer, loop_animations)
+from .renderer import (MlxContext, Viewport, ImageBuffer, MazeRenderer, loop_handler)
 from .maze_solvers import (MazeSolver, SinglePathSolver, AllPathsSolver)
 
 __all__ = ["ConfigParser", "ConfigError", "write_hexadecimal_map_to_file",
@@ -23,4 +23,4 @@ __all__ = ["ConfigParser", "ConfigError", "write_hexadecimal_map_to_file",
            "ImageBuffer", "MazeRenderer",
            "PerfectMazeDFSGenerator",
            "MazeSolver", "SinglePathSolver", "AllPathsSolver",
-           "loop_animations"]
+           "loop_handler"]

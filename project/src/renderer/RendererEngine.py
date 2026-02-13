@@ -17,6 +17,26 @@ from src.maze_factory.cells import (Cell, ExitCell,
 from src.renderer.Image import Image
 
 class Renderer:
+    _renderer_queue: list
+    _animations: dict[str,dict]
+
+
+    @property
+    def renderer_queue(self) -> list:
+        return self._renderer_queue
+
+    @renderer_queue.setter
+    def renderer_queue(self, rend_q: list = []) -> None:
+        self._renderer_queue = rend_q
+
+    @property
+    def animations(self) -> dict[str, dict] -> None:
+        return self._animations
+
+    @animations.setter
+    def animations(self, a: dict[str, dict]) -> None:
+        self.self._animationse = a
+
     # """Abstract/generic renderer: only knows ImageBuffer"""
     def draw(self, target: any, state: any, elements: list[str] = None) -> None:
         """Show the image; MLX handled in boundary layer"""

@@ -10,7 +10,6 @@ class MlxContext:
     # mlxbinding.mlx.mlx_ptr == mlx_ptr (pointer to the running MiniLibX backend)
     # """"
     _img_assets: Image
-    _renderer_queue: list
     def __init__(self, mlx_binding: any) -> None:
         try:
             # the minilibx is instantiated
@@ -35,14 +34,6 @@ class MlxContext:
     @property
     def img_asset(self) -> Image:
         return self._img_assets
-
-    @property
-    def renderer_queue(self) -> list:
-        return self._renderer_queue
-
-    @renderer_queue.setter
-    def renderer_queue(self, rend_q: list = []) -> None:
-        self._renderer_queue = rend_q
 
 
     def get_size(self) -> tuple:
