@@ -1,11 +1,12 @@
-from tests import (Cell, ExitCell, EntryCell, FourtyTwoCell)
 from tests import Maze, ConfigError, ConfigParser
+from tests import (Cell, ExitCell, EntryCell, FourtyTwoCell)
 import mlx
 from tests import MlxContext, ImageBuffer, MazeRenderer
 from tests import write_hexadecimal_map_to_file, convert_cell_path_to_directions
 from tests import SinglePathSolver
 from tests import loop_handler, close_viewport_handler
 import sys
+import time
 
 # Pick a seed, just a random number, fill in the config file in project.
 # Then generate the maze from the project folder by runnning it with:
@@ -41,11 +42,14 @@ def main() -> None:
     # maze.randomly_remove_some_walls(0.6)
     perfect_solver = SinglePathSolver(maze)
     solution = perfect_solver.solve()
-    # print(solution)
-
+    print(solution)
+    
     for path in solution:
         path_for_file = path
 
+    path = convert_cell_path_to_directions(maze, path_for_file)
+    print(path)
+    
     # maze.randomly_remove_some_walls(0.6)
     context = MlxContext(mlx.Mlx())
     cell_size = 60
@@ -65,31 +69,32 @@ def main() -> None:
         "elements":{
             "background":{
                 "target": maze.two_dimensional_cell_grid,
-                "color": 0
+                "color": 0xFF2200FF
             },
             "fourtytwo":{
                 "target": [cell for rows in maze.two_dimensional_cell_grid for cell in rows if isinstance(cell, FourtyTwoCell)],
-                "in_color": 0
+                "in_color": 0xFFFFFFFF
             },
             "walls":{
-                "target": (cell for rows in maze.two_dimensional_cell_grid for cell in rows if not isinstance(cell, FourtyTwoCell)),
-                "in_color": 0
+                "target": (cell for rows in maze.two_dimensional_cell_grid for cell in rows),
+                "color": 0xFF00AAAA
             },
             "entry":{
                 "target": [cell for rows in maze.two_dimensional_cell_grid for cell in rows if isinstance(cell, EntryCell)],
-                "in_color": 0
+                "in_color": 0xFFFF00FF
             },
             "exit":{
                 "target": [cell for rows in maze.two_dimensional_cell_grid for cell in rows if isinstance(cell, ExitCell)],
-                "in_color": 0
+                "in_color": 0xFF00FF00
             },
         }}
+        
+    time.sleep(5)
 
     context.mlxbinding.mlx_hook(viewport.viewport_ptr, 33, 0, close_viewport_handler, context.mlx_ptr)
-    context.mlxbinding.mlx_loop_hook(context.mlx_ptr, loop_animations, [context, viewport, renderer])
+    context.mlxbinding.mlx_loop_hook(context.mlx_ptr, loop_handler, [context, viewport, renderer])
     context.start_loop()
     context.destroy_viewport(viewport.viewport_ptr)
 
 if __name__ == "__main__":
     main()
-

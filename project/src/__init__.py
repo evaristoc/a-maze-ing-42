@@ -1,7 +1,7 @@
 from .collect_config_variables import (ConfigParser,
                                        ConfigError)
 
-from .map import write_hexadecimal_map_to_file
+from .map import write_hexadecimal_map_to_file, convert_cell_path_to_directions
 
 from .maze_factory import (Cell,
                            FourtyTwoCell,
@@ -25,4 +25,5 @@ __all__ = ["ConfigParser", "ConfigError", "write_hexadecimal_map_to_file",
            "ImageBuffer", "MazeRenderer",
            "PerfectMazeDFSGenerator",
            "MazeSolver", "SinglePathSolver", "AllPathsSolver",
-           "loop_handler", "close_viewport_handler", "SoundManager"]
+           "loop_handler", "close_viewport_handler", 
+           "convert_cell_path_to_directions", "SoundManager"]

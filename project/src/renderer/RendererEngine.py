@@ -30,12 +30,12 @@ class Renderer:
         self._renderer_queue = rend_q
 
     @property
-    def animations(self) -> dict[str, dict] -> None:
+    def animations(self) -> dict[str, dict]:
         return self._animations
 
     @animations.setter
     def animations(self, a: dict[str, dict]) -> None:
-        self.self._animationse = a
+        self._animations = a
 
     # """Abstract/generic renderer: only knows ImageBuffer"""
     def draw(self, target: any, state: any, elements: list[str] = None) -> None:
@@ -119,11 +119,11 @@ class MazeRenderer(Renderer):
         x_area = 0
         y_area = 0
         if isinstance(cell, FourtyTwoCell):
-            start_x = self.__wall_thickness + x_cell * (self.__interior_cell_size + self.__wall_thickness) + 2 * self.__padding
-            start_y = self.__wall_thickness + y_cell * (self.__interior_cell_size + self.__wall_thickness) + 2 * self.__padding
+            start_x = self.__wall_thickness + x_cell * (self.__interior_cell_size + self.__wall_thickness) + self.__padding * 2
+            start_y = self.__wall_thickness + y_cell * (self.__interior_cell_size + self.__wall_thickness) + self.__padding // 2
             x_area = self.__cell_center
             y_area = self.__cell_center         
-        if isinstance(cell, ExitCell) or isinstance(cell, EntryCell):
+        elif isinstance(cell, ExitCell) or isinstance(cell, EntryCell):
             start_x = self.__wall_thickness + x_cell * (self.__interior_cell_size + self.__wall_thickness) + self.__padding
             start_y = self.__wall_thickness + y_cell * (self.__interior_cell_size + self.__wall_thickness) + self.__padding
             x_area = self.__cell_center

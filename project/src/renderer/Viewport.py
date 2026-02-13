@@ -69,4 +69,4 @@ class Viewport():
         except Exception as e:
             print(f"Error: viewporrt at add img raised: {e}", file=sys.stderr)
             sys.exit(1)
-        print(f"viewport: image {img.img_ptr} successfully added")
+        #print(f"viewport: image {img.img_ptr} successfully added")
