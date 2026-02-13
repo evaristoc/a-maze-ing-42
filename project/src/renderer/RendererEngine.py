@@ -46,7 +46,7 @@ class Renderer:
 class MazeRenderer(Renderer):
     """Maze-specific renderer"""
     DEFAULT_COLORS = {
-        "background": 0xFF2200FF,
+        "background": 0xFF5500FF,
         "fourtytwo": 0xFFFFFFFF,
         "entrance": 0xFF00FF00,
         "exit": 0xFFFF00FF,

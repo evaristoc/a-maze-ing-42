@@ -2,6 +2,7 @@ from tests import Maze, ConfigError, ConfigParser
 import mlx
 from tests import MlxContext, ImageBuffer, MazeRenderer
 from tests import write_hexadecimal_map_to_file
+from tests import SinglePathSolver
 import sys
 
 # Pick a seed, just a random number, fill in the config file in project.
@@ -36,6 +37,20 @@ def main() -> None:
         maze.generate_simple_maze()
 
     # maze.randomly_remove_some_walls(0.6)
+    perfect_solver = SinglePathSolver(maze)
+    solution = perfect_solver.solve()
+    # print(solution)
+
+    for path in solution:
+        path_for_file = path
+
+    write_hexadecimal_map_to_file(maze, config["entry"], config["exit"],
+                                  path_for_file,
+                                  config["output_file"]
+                                  )
+
+
+    # maze.randomly_remove_some_walls(0.6)
     context = MlxContext(mlx.Mlx())
     cell_size = 60
     img_width = cell_size * maze_width - (maze_width - 1) * int(cell_size * .2) # important, but precalculated in advance...
@@ -57,6 +72,6 @@ def main() -> None:
     context.start_loop()
     context.destroy_window(viewport.viewport_ptr)
 
+
 if __name__ == "__main__":
     main()
-
