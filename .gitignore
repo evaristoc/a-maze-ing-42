@@ -14,8 +14,9 @@ ubuntu-*.log
 id_rsa
 id_ed25519
 
-# pycache
+# caches created by dependencies.
 __pycache__
+.mypy_cache
 <<<<<<< HEAD
 
 # references
