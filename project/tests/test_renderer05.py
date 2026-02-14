@@ -95,6 +95,10 @@ def main() -> None:
     context.mlxbinding.mlx_key_hook(viewport.viewport_ptr, reload_handler, [context, viewport, renderer])
     context.mlxbinding.mlx_hook(viewport.viewport_ptr, 33, 0, close_viewport_handler, context.mlx_ptr)
     context.mlxbinding.mlx_loop_hook(context.mlx_ptr, loop_handler, [context, viewport, renderer])
+    help_win = context.mlxbinding.mlx_new_window(context.mlx_ptr, 300, 200, "Controls")
+    context.mlxbinding.mlx_string_put(context.mlx_ptr, help_win, 20, 30, 0xFFFFFF, "CONTROLS")
+    context.mlxbinding.mlx_string_put(context.mlx_ptr, help_win, 20, 60, 0xFFFFFF, "R: Reload Maze")
+    context.mlxbinding.mlx_string_put(context.mlx_ptr, help_win, 20, 90, 0xFFFFFF, "M: Solve")
     context.start_loop()
     context.destroy_viewport(viewport.viewport_ptr)
 

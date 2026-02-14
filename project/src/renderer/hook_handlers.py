@@ -1,6 +1,18 @@
 import mlx
 from typing import Type
 import os
+from src.collect_config_variables.config_parser import ConfigParser
+from src.renderer.Image import ImageBuffer
+from src.collect_config_variables.error_handlers.config_errors import ConfigError
+from src.maze_factory.maze import Maze
+from src.maze_factory.cells import Cell, ExitCell, EntryCell, FourtyTwoCell
+#from tests import (Cell, ExitCell, EntryCell, FourtyTwoCell)
+#import mlx
+#from tests import MlxContext, ImageBuffer, MazeRenderer
+from src.map import write_hexadecimal_map_to_file, convert_cell_path_to_directions
+from src.maze_solvers.single_path_solver import SinglePathSolver
+import sys
+import time
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.dirname(os.path.dirname(script_dir))
@@ -42,7 +54,7 @@ def close_viewport_handler(mlx_ptr: int) -> None:
         print(f"Error: context at destroy window raised: {e}", file=sys.stderr)
         sys.exit(1)
 
-def update(params: list)
+def update(params: list) -> None:
     context, viewport, renderer = params
     try:
         config = ConfigParser.from_file(config_path)
@@ -83,14 +95,38 @@ def update(params: list)
     viewport = context.create_new_viewport(img_width, img_height, "maze test")
     context.create_new_image(ImageBuffer, img_width, img_height)
     renderer.renderer_queue = ["background", "walls", "doors"]
-    renderer.animations["globals"]["frame_count"] = 0
-    time.sleep(2)
+    renderer.animations = {
+        "globals":{
+            "frame_count": 0
+        },
+        "elements":{
+            "background":{
+                "target": maze.two_dimensional_cell_grid,
+                "color": 0xFF2200FF
+            },
+            "fourtytwo":{
+                "target": [cell for rows in maze.two_dimensional_cell_grid for cell in rows if isinstance(cell, FourtyTwoCell)],
+                "in_color": 0xFFFFFFFF
+            },
+            "walls":{
+                "target": (cell for rows in maze.two_dimensional_cell_grid for cell in rows),
+                "color": 0xFF00AAAA
+            },
+            "entry":{
+                "target": [cell for rows in maze.two_dimensional_cell_grid for cell in rows if isinstance(cell, EntryCell)],
+                "in_color": 0xFFFF00FF
+            },
+            "exit":{
+                "target": [cell for rows in maze.two_dimensional_cell_grid for cell in rows if isinstance(cell, ExitCell)],
+                "in_color": 0xFF00FF00
+            },
+        }}
     context.mlxbinding.mlx_key_hook(viewport.viewport_ptr, reload_handler, [context, viewport, renderer])
     context.mlxbinding.mlx_hook(viewport.viewport_ptr, 33, 0, close_viewport_handler, context.mlx_ptr)
     context.mlxbinding.mlx_loop_hook(context.mlx_ptr, loop_handler, [context, viewport, renderer])
     return
 
-def reload_handler(key: int, params: list) -> int:
+def reload_handler(keycode: int, params: list) -> int:
     # params: [context, viewport, renderer]
     
     # 1. ESC to Close (Safety)
@@ -104,4 +140,3 @@ def reload_handler(key: int, params: list) -> int:
         update(params)
         
     return 0
-

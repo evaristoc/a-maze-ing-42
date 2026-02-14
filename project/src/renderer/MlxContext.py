@@ -35,7 +35,6 @@ class MlxContext:
     def img_asset(self) -> Image:
         return self._img_assets
 
-
     def get_size(self) -> tuple:
         return self.mlxbinding.get_screen_size(self.mlx_ptr)
 
