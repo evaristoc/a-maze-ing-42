@@ -9,7 +9,6 @@ class MlxContext:
     # mlxbinding.mlx == mlxbackend
     # mlxbinding.mlx.mlx_ptr == mlx_ptr (pointer to the running MiniLibX backend)
     # """"
-    _img_assets: Image
     def __init__(self, mlx_binding: any) -> None:
         try:
             # the minilibx is instantiated
@@ -30,10 +29,6 @@ class MlxContext:
     @property
     def mlx_ptr(self) -> int:
         return self._mlx_ptr
-
-    @property
-    def img_asset(self) -> Image:
-        return self._img_assets
 
     def get_size(self) -> tuple:
         return self.mlxbinding.get_screen_size(self.mlx_ptr)
@@ -73,9 +68,9 @@ class MlxContext:
             sys.exit(1)
         print(f"context: image {img.img_ptr} successfully created")
         img.set_data(raw_data) #casting to memoryview!!!
-        self._img_assets = img
         return img
-    
+
+
     def start_loop(self):
         try:
             print("Starting the mlx loop...")
@@ -106,4 +101,4 @@ class MlxContext:
                 return
         except Exception as e:
             print(f"Error: context at destroy image raised: {e}", file=sys.stderr)
-            sys.exit(1)  
+            sys.exit(1)
