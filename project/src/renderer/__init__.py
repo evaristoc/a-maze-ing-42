@@ -1,11 +1,14 @@
 from .MlxContext import MlxContext
 from .Viewport import Viewport
 from .Image import Image, ImageBuffer
-from .Renderers import MazeRenderer
+from .RendererEngine import MazeRenderer
+from .hook_handlers import loop_handler, close_viewport_handler
 
 __all__ = ["MlxContext",
            "Viewport",
            "Image",
            "ImageBuffer",
-           "MazeRenderer"
+           "MazeRenderer",
+           "loop_handler",
+           "close_viewport_handler"
            ]

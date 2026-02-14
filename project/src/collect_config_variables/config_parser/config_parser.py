@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Tuple
-
-
-class ConfigError(Exception):
-    """Raised when the configuration file is invalid."""
+from src.collect_config_variables.error_handlers import ConfigError
+import sys
+RD = "\033[91m"
+R = "\033[0m"
 
 
 @dataclass(frozen=True)
@@ -60,33 +60,42 @@ class ConfigParser:
                     "OUTPUT_FILE", "PERFECT"}
         missing = required - values.keys()
 
-        if missing:
-            raise ConfigError(f"Missing configuration keys: "
-                              f"{', '.join(sorted(missing))}")
+        try:
+            if missing:
+                raise ConfigError(f"Missing configuration keys: "
+                                  f"{', '.join(sorted(missing))}")
+            width = ConfigParser._parse_positive_int(values["WIDTH"], "WIDTH")
+            if width < 5:
+                raise ConfigError("width must be bigger than four.")
+            height = ConfigParser._parse_positive_int(values["HEIGHT"],
+                                                      "HEIGHT")
+            if height < 5:
+                raise ConfigError("height must be bigger than four.")
+            entry = ConfigParser._parse_coordinates(values["ENTRY"], "ENTRY")
+            exit_ = ConfigParser._parse_coordinates(values["EXIT"], "EXIT")
+            seed = ConfigParser._parse_positive_int(values["SEED"], "SEED")
+            output_file = Path(values["OUTPUT_FILE"])
+            perfect = ConfigParser._parse_bool(values["PERFECT"], "PERFECT")
 
-        width = ConfigParser._parse_positive_int(values["WIDTH"], "WIDTH")
-        height = ConfigParser._parse_positive_int(values["HEIGHT"], "HEIGHT")
-        entry = ConfigParser._parse_coordinates(values["ENTRY"], "ENTRY")
-        exit_ = ConfigParser._parse_coordinates(values["EXIT"], "EXIT")
-        seed = ConfigParser._parse_positive_int(values["SEED"], "SEED")
-        output_file = Path(values["OUTPUT_FILE"])
-        perfect = ConfigParser._parse_bool(values["PERFECT"], "PERFECT")
+            ConfigParser._validate_bounds(entry, width, height, "ENTRY")
+            ConfigParser._validate_bounds(exit_, width, height, "EXIT")
 
-        ConfigParser._validate_bounds(entry, width, height, "ENTRY")
-        ConfigParser._validate_bounds(exit_, width, height, "EXIT")
+            if entry == exit_:
+                raise ConfigError("ENTRY and EXIT must be different")
 
-        if entry == exit_:
-            raise ConfigError("ENTRY and EXIT must be different")
-
-        return ConfigParser(
-            width=width,
-            height=height,
-            entry=entry,
-            exit=exit_,
-            seed=seed,
-            output_file=output_file,
-            perfect=perfect,
-        )
+            return ConfigParser(
+                width=width,
+                height=height,
+                entry=entry,
+                exit=exit_,
+                seed=seed,
+                output_file=output_file,
+                perfect=perfect,
+            )
+        except ConfigError as e:
+            print(f"{RD}Error: {e}{R}")
+            print(f"\n{RD}Please reconfigure your config file!{R}")
+            sys.exit(1)
 
     def _parse_positive_int(value: str, name: str) -> int:
         try:
@@ -122,7 +131,7 @@ class ConfigParser:
     ) -> None:
 
         x, y = coord
-        if not (0 <= x <= width and 0 <= y <= height):
+        if not (0 <= x < width and 0 <= y < height):
             raise ConfigError(f"{name} is outside maze bounds")
 
     @staticmethod
