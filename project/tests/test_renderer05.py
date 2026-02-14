@@ -2,7 +2,8 @@ from tests import Maze, ConfigError, ConfigParser
 from tests import (Cell, ExitCell, EntryCell, FourtyTwoCell)
 import mlx
 from tests import MlxContext, ImageBuffer, MazeRenderer
-from tests import write_hexadecimal_map_to_file, convert_cell_path_to_directions
+from tests import (write_hexadecimal_map_to_file,
+                   convert_cell_path_to_directions)
 from tests import SinglePathSolver
 from tests import loop_handler, reload_handler, close_viewport_handler
 import sys
@@ -12,6 +13,7 @@ import time
 # Then generate the maze from the project folder by runnning it with:
 # python3 -m tests.test_maze config.txt
 frame = 0
+
 
 def main() -> None:
 
@@ -28,7 +30,7 @@ def main() -> None:
 
     maze_width = config["width"]
     maze_height = config["height"]
-    seed = 122
+    seed = config["seed"]
 
     maze = Maze(maze_width, maze_height, seed)
 
@@ -43,65 +45,146 @@ def main() -> None:
     perfect_solver = SinglePathSolver(maze)
     solution = perfect_solver.solve()
     print(solution)
-    
+
     for path in solution:
         path_for_file = path
 
+    write_hexadecimal_map_to_file(maze, config["entry"], config["exit"],
+                                  path_for_file,
+                                  config["output_file"]
+                                  )
+
     path = convert_cell_path_to_directions(maze, path_for_file)
     print(path)
-    
-    # maze.randomly_remove_some_walls(0.6)
+
+    default_options = {"MUSIC_FILE": True,
+                       "COLOR_WALLS": 0xFF00AAAA,
+                       "COLOR_BACKGROUND": 0xFF2200FF,
+                       "COLOR_FOURTYTWO": 0xFFFFFFFF,
+                       "COLOR_ENTRY": 0xFFFF00FF,
+                       "COLOR_EXIT": 0xFF00FF00,
+                       "COLOR_MENUTEXT": 0xFF0000,
+                       "CELL_SIZE": 60,
+                       "PERC_WALL": 0.2,
+                       "PERC_PADDING": 0.2}
+
     context = MlxContext(mlx.Mlx())
-    cell_size = 60
-    img_width = cell_size * maze_width - (maze_width - 1) * int(cell_size * .2) # important, but precalculated in advance...
-    img_height = cell_size * maze_height - (maze_height - 1) * int(cell_size * .2) # important, but precalculated in advance...
+    if config["cell_size"]:
+        cell_size = config["cell_size"]
+    else:
+        cell_size = default_options["CELL_SIZE"]
+
+    if config["perc_wall"]:
+        perc_wall = config["perc_wall"]
+    else:
+        perc_wall = default_options["PERC_WALL"]
+
+    if config["perc_padding"]:
+        perc_pad = config["perc_padding"]
+    else:
+        perc_pad = default_options["PERC_PADDING"]
+
+    # important, but precalculated in advance...
+    img_width = ((cell_size * maze_width) - (
+        (maze_width - 1) * int(cell_size * 0.2)))
+
+    # important, but precalculated in advance...
+    img_height = ((cell_size * maze_height) - (
+        (maze_height - 1) * int(cell_size * 0.2)))
+
     viewport = context.create_new_viewport(img_width, img_height, "maze test")
     image = context.create_new_image(ImageBuffer, img_width, img_height)
-    #image.clear()
+
+    # image.clear()
     renderer = MazeRenderer(cell_size)
-    #renderer.draw(image, maze.two_dimensional_cell_grid)
-    #viewport.add_img(image)
+    # renderer.draw(image, maze.two_dimensional_cell_grid)
+    # viewport.add_img(image)
+
+    if config["color_background"]:
+        color_background = config["color_background"]
+    else:
+        color_background = default_options["COLOR_BACKGROUND"]
+    if config["color_fourtytwo"]:
+        color_fourtytwo = config["color_fourtytwo"]
+    else:
+        color_fourtytwo = default_options["COLOR_FOURTYTWO"]
+    if config["color_walls"]:
+        color_walls = config["color_walls"]
+    else:
+        color_walls = default_options["COLOR_WALLS"]
+    if config["color_entry"]:
+        color_entry = config["color_entry"]
+    else:
+        color_entry = default_options["COLOR_ENTRY"]
+    if config["color_exit"]:
+        color_exit = default_options["COLOR_EXIT"]
+    else:
+        color_exit = default_options["COLOR_EXIT"]
+
     renderer.renderer_queue = ["background", "walls", "doors"]
     renderer.animations = {
-        "globals":{
+        "globals": {
             "frame_count": 0
         },
-        "elements":{
-            "background":{
+        "elements": {
+            "background": {
                 "target": maze.two_dimensional_cell_grid,
-                "color": 0xFF2200FF
+                "color": color_background
             },
-            "fourtytwo":{
-                "target": [cell for rows in maze.two_dimensional_cell_grid for cell in rows if isinstance(cell, FourtyTwoCell)],
-                "in_color": 0xFFFFFFFF
+            "fourtytwo": {
+                "target": [cell for rows in maze.two_dimensional_cell_grid
+                           for cell in rows
+                           if isinstance(cell, FourtyTwoCell)],
+                "in_color": color_fourtytwo
             },
-            "walls":{
-                "target": (cell for rows in maze.two_dimensional_cell_grid for cell in rows),
-                "color": 0xFF00AAAA
+            "walls": {
+                "target": (cell for rows in maze.two_dimensional_cell_grid
+                           for cell in rows),
+                "color": color_walls
             },
-            "entry":{
-                "target": [cell for rows in maze.two_dimensional_cell_grid for cell in rows if isinstance(cell, EntryCell)],
-                "in_color": 0xFFFF00FF
+            "entry": {
+                "target": [cell for rows in maze.two_dimensional_cell_grid
+                           for cell in rows if isinstance(cell, EntryCell)],
+                "in_color": color_entry
             },
-            "exit":{
-                "target": [cell for rows in maze.two_dimensional_cell_grid for cell in rows if isinstance(cell, ExitCell)],
-                "in_color": 0xFF00FF00
+            "exit": {
+                "target": [cell for rows in maze.two_dimensional_cell_grid
+                           for cell in rows if isinstance(cell, ExitCell)],
+                "in_color": color_exit
             },
         }}
-        
+
     time.sleep(2)
 
     # event hooks
-    context.mlxbinding.mlx_key_hook(viewport.viewport_ptr, reload_handler, [context, viewport, image, renderer])
-    context.mlxbinding.mlx_hook(viewport.viewport_ptr, 33, 0, close_viewport_handler, context.mlx_ptr)
-    context.mlxbinding.mlx_loop_hook(context.mlx_ptr, loop_handler, [context, viewport, image, renderer])
+    context.mlxbinding.mlx_key_hook(viewport.viewport_ptr,
+                                    reload_handler,
+                                    [context, viewport, image, renderer])
+    context.mlxbinding.mlx_hook(viewport.viewport_ptr,
+                                33, 0,
+                                close_viewport_handler,
+                                context.mlx_ptr)
+    context.mlxbinding.mlx_loop_hook(context.mlx_ptr,
+                                     loop_handler,
+                                     [context, viewport, image, renderer])
+
+    if config["color_menutext"]:
+        color_menutext = config["color_menutext"]
+    else:
+        color_menutext = default_options["COLOR_MENUTEXT"]
+
     help_vp = context.create_new_viewport(300, 200, "Controls")
-    help_vp.string_put(20, 30, 0xFFFFFF, "CONTROLS")
-    help_vp.string_put(20, 60, 0xFFFFFF, "R: Reload Maze")
-    help_vp.string_put(20, 90, 0xFFFFFF, "M: Solve")
+    help_vp.string_put(20, 30, color_menutext, " ---__\\.CONTROLS./__---")
+    help_vp.string_put(20, 60, color_menutext,
+                       "ESC:\tExit program".expandtabs(8))
+    help_vp.string_put(20, 90, color_menutext,
+                       "R:\tReload Maze".expandtabs(8))
+    help_vp.string_put(20, 120, color_menutext,
+                       "M:\tSolve".expandtabs(8))
     context.start_loop()
     context.destroy_viewport(help_vp.viewport_ptr)
     context.destroy_viewport(viewport.viewport_ptr)
+
 
 if __name__ == "__main__":
     main()

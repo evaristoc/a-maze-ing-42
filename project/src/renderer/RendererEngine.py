@@ -195,7 +195,7 @@ class MazeRenderer(Renderer):
                 x_end = max(intersections)
                 for x in range(x_start, x_end + 1):
                     img.put_pixel(x, y, color)
-   
+
     def __draw_triangle_in_cell(self, img: Image, cell: Cell, color: int, direction: str) -> None:
         x_cell = cell.cell_position_x
         y_cell = cell.cell_position_y
