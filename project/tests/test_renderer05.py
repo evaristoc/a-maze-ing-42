@@ -89,8 +89,10 @@ def main() -> None:
             },
         }}
         
-    time.sleep(5)
+    time.sleep(2)
 
+    # event hooks
+    context.mlxbinding.mlx_key_hook(viewport.viewport_ptr, reload_handler, [context, viewport, renderer])
     context.mlxbinding.mlx_hook(viewport.viewport_ptr, 33, 0, close_viewport_handler, context.mlx_ptr)
     context.mlxbinding.mlx_loop_hook(context.mlx_ptr, loop_handler, [context, viewport, renderer])
     context.start_loop()
