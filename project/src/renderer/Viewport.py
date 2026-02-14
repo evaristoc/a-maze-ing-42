@@ -67,6 +67,14 @@ class Viewport():
                 y
             )
         except Exception as e:
-            print(f"Error: viewporrt at add img raised: {e}", file=sys.stderr)
+            print(f"Error: viewport at add img raised: {e}", file=sys.stderr)
             sys.exit(1)
         #print(f"viewport: image {img.img_ptr} successfully added")
+
+    def string_put(self, start_x: int, start_y: int, font_color: int, string: str) -> None:
+        try:
+            mlx.Mlx().mlx_string_put(self.mlx_ptr, self._viewportptr, start_x, start_y, font_color, string)
+        except Exception as e:
+            print(f"Error: viewpot at string put raised: {e}", file=sys.strerr)
+            return
+        print("viewport: string successfully added")

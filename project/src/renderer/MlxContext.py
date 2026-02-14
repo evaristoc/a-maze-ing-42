@@ -70,12 +70,6 @@ class MlxContext:
         img.set_data(raw_data) #casting to memoryview!!!
         return img
 
-    def string_put(self, viewport_ptr: int, start_x: int, start_y: int, font_color: int, string: str) -> None:
-        try:
-            self.mlxbinding.mlx_string_put(self.mlx_ptr, viewport_ptr, start_x, start_y, font_color, string)
-        except Exception as e:
-            print(f"Error at context string put: unable to add string to viewport {viewport_ptr}")
-        print("Successfully added string to viewport {viewport_ptr}")
 
     def start_loop(self):
         try:

@@ -4,7 +4,7 @@ import mlx
 from tests import MlxContext, ImageBuffer, MazeRenderer
 from tests import write_hexadecimal_map_to_file, convert_cell_path_to_directions
 from tests import SinglePathSolver
-from tests import loop_handler, close_viewport_handler
+from tests import loop_handler, reload_handler, close_viewport_handler
 import sys
 import time
 
@@ -95,11 +95,12 @@ def main() -> None:
     context.mlxbinding.mlx_key_hook(viewport.viewport_ptr, reload_handler, [context, viewport, image, renderer])
     context.mlxbinding.mlx_hook(viewport.viewport_ptr, 33, 0, close_viewport_handler, context.mlx_ptr)
     context.mlxbinding.mlx_loop_hook(context.mlx_ptr, loop_handler, [context, viewport, image, renderer])
-    help_vp = context.create_viewport(300, 200, "Controls")
-    context.string_put(help_vp, 20, 30, 0xFFFFFF, "CONTROLS")
-    context.string_put(help_vp, 20, 60, 0xFFFFFF, "R: Reload Maze")
-    context.string_put(help_vp, 20, 90, 0xFFFFFF, "M: Solve")
+    help_vp = context.create_new_viewport(300, 200, "Controls")
+    help_vp.string_put(20, 30, 0xFFFFFF, "CONTROLS")
+    help_vp.string_put(20, 60, 0xFFFFFF, "R: Reload Maze")
+    help_vp.string_put(20, 90, 0xFFFFFF, "M: Solve")
     context.start_loop()
+    context.destroy_viewport(help_vp.viewport_ptr)
     context.destroy_viewport(viewport.viewport_ptr)
 
 if __name__ == "__main__":
