@@ -19,31 +19,31 @@ project_root = os.path.dirname(os.path.dirname(script_dir))
 config_path = os.path.join(project_root, "config.txt")
 
 def loop_handler(params: list) -> None:
-    context, viewport, renderer = params
+    context, viewport, img, renderer = params
     if not renderer.renderer_queue:
         # Optimization: We still put the image to keep the window alive/responsive
-        viewport.add_img(context.img_asset)
+        viewport.add_img(img)
         return
     renderer.animations["globals"]["frame_count"] += 1
     if renderer.animations["globals"]["frame_count"] % 1 != 0:
-        viewport.add_img(context.img_asset)
+        viewport.add_img(img)
         return 0
     if renderer.renderer_queue[0] == "background":
-        renderer.draw(context.img_asset, renderer.animations["elements"]["background"]["target"],  {"background":renderer.animations["elements"]["background"]["color"]})
-        renderer.draw(context.img_asset, [renderer.animations["elements"]["fourtytwo"]["target"]], {"fourtytwo":renderer.animations["elements"]["fourtytwo"]["in_color"]})
+        renderer.draw(img, renderer.animations["elements"]["background"]["target"],  {"background":renderer.animations["elements"]["background"]["color"]})
+        renderer.draw(img, [renderer.animations["elements"]["fourtytwo"]["target"]], {"fourtytwo":renderer.animations["elements"]["fourtytwo"]["in_color"]})
         print("background ready")
         renderer.renderer_queue.pop(0)
     elif renderer.renderer_queue[0] == "walls":
         current = next(renderer.animations["elements"]["walls"]["target"], None)
         if current is not None:
-            renderer.draw(context.img_asset, [[current]], {"walls":renderer.animations["elements"]["walls"]["color"]})
+            renderer.draw(img, [[current]], {"walls":renderer.animations["elements"]["walls"]["color"]})
         else:
             renderer.renderer_queue.pop(0)
     elif renderer.renderer_queue[0] == "doors":
-        renderer.draw(context.img_asset, [renderer.animations["elements"]["exit"]["target"]], {"exit": renderer.animations["elements"]["exit"]["in_color"]})
-        renderer.draw(context.img_asset, [renderer.animations["elements"]["entry"]["target"]], {"entrance": renderer.animations["elements"]["entry"]["in_color"]})
+        renderer.draw(img, [renderer.animations["elements"]["exit"]["target"]], {"exit": renderer.animations["elements"]["exit"]["in_color"]})
+        renderer.draw(img, [renderer.animations["elements"]["entry"]["target"]], {"entrance": renderer.animations["elements"]["entry"]["in_color"]})
         renderer.renderer_queue.pop(0)
-    viewport.add_img(context.img_asset)
+    viewport.add_img(img)
     return 0
 
 def close_viewport_handler(mlx_ptr: int) -> None:
@@ -55,7 +55,7 @@ def close_viewport_handler(mlx_ptr: int) -> None:
         sys.exit(1)
 
 def update(params: list) -> None:
-    context, viewport, renderer = params
+    context, viewport, img, renderer = params
     try:
         config = ConfigParser.from_file(config_path)
         config = config.config_parser_output_into_dict(config)
@@ -90,10 +90,10 @@ def update(params: list) -> None:
     cell_size = 60
     img_width = cell_size * maze_width - (maze_width - 1) * int(cell_size * .2) # important, but precalculated in advance...
     img_height = cell_size * maze_height - (maze_height - 1) * int(cell_size * .2) # important, but precalculated in advance...
-    context.destroy_image(context.img_asset.img_ptr)
+    context.destroy_image(img.img_ptr)
     context.destroy_viewport(viewport.viewport_ptr)
     viewport = context.create_new_viewport(img_width, img_height, "maze test")
-    context.create_new_image(ImageBuffer, img_width, img_height)
+    img = context.create_new_image(ImageBuffer, img_width, img_height)
     renderer.renderer_queue = ["background", "walls", "doors"]
     renderer.animations = {
         "globals":{
@@ -121,9 +121,9 @@ def update(params: list) -> None:
                 "in_color": 0xFF00FF00
             },
         }}
-    context.mlxbinding.mlx_key_hook(viewport.viewport_ptr, reload_handler, [context, viewport, renderer])
+    context.mlxbinding.mlx_key_hook(viewport.viewport_ptr, reload_handler, [context, viewport, img, renderer])
     context.mlxbinding.mlx_hook(viewport.viewport_ptr, 33, 0, close_viewport_handler, context.mlx_ptr)
-    context.mlxbinding.mlx_loop_hook(context.mlx_ptr, loop_handler, [context, viewport, renderer])
+    context.mlxbinding.mlx_loop_hook(context.mlx_ptr, loop_handler, [context, viewport, img, renderer])
     return
 
 def reload_handler(keycode: int, params: list) -> int:

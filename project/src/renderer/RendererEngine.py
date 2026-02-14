@@ -70,8 +70,7 @@ class MazeRenderer(Renderer):
     # """
     # - background will paint all the image, including under walls, with a single color (not led by cell)
     # - fortytwo, entrance and exit will paint a padded interior (led by cell)
-    # - walls will be painted by cell if east / south; north / west will be painted as a single line
-    #   - the way walls are painted constrains customization
+    # - walls will be painted by cell
     # - padding is not painted (it is the color of background)
     # - open channels between cells are background coloured
     # """
