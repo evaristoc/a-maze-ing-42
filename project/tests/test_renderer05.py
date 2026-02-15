@@ -86,17 +86,17 @@ def main() -> None:
 
     # important, but precalculated in advance...
     img_width = ((cell_size * maze_width) - (
-        (maze_width - 1) * int(cell_size * 0.2)))
+        (maze_width - 1) * int(cell_size * perc_wall)))
 
     # important, but precalculated in advance...
     img_height = ((cell_size * maze_height) - (
-        (maze_height - 1) * int(cell_size * 0.2)))
+        (maze_height - 1) * int(cell_size * perc_wall)))
 
     viewport = context.create_new_viewport(img_width, img_height, "maze test")
     image = context.create_new_image(ImageBuffer, img_width, img_height)
 
     # image.clear()
-    renderer = MazeRenderer(cell_size)
+    renderer = MazeRenderer(cell_size, perc_wall, perc_pad)
     # renderer.draw(image, maze.two_dimensional_cell_grid)
     # viewport.add_img(image)
 
