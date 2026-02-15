@@ -55,10 +55,13 @@ class MazeRenderer(Renderer):
     }
     
     def __init__(self, total_cell_size: int = 50, perc_wall: float = .2, perc_padding: float = .2) -> None:
+        self.__perc_wall = perc_wall
+        self.__perc_padding = perc_padding
         self.__total_cell_size = total_cell_size
-        self.__wall_thickness = int(self.__total_cell_size * perc_wall)
+        # above is not private because we want to adjust them when reloading the maze.
+        self.__wall_thickness = int(self.__total_cell_size * self.__perc_wall)
         self.__interior_cell_size = self.__total_cell_size - 2 * self.__wall_thickness
-        self.__padding = int(self.__interior_cell_size * perc_padding)
+        self.__padding = int(self.__interior_cell_size * self.__perc_padding)
         self.__cell_center = self.__interior_cell_size - 2 * self.__padding
         print("renderer: successfully instantiated; set maze rendering properties")
 
@@ -195,7 +198,7 @@ class MazeRenderer(Renderer):
                 x_end = max(intersections)
                 for x in range(x_start, x_end + 1):
                     img.put_pixel(x, y, color)
-   
+
     def __draw_triangle_in_cell(self, img: Image, cell: Cell, color: int, direction: str) -> None:
         x_cell = cell.cell_position_x
         y_cell = cell.cell_position_y

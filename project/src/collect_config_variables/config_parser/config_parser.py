@@ -16,6 +16,16 @@ class ConfigParser:
     seed: int
     output_file: Path
     perfect: bool
+    music_file: bool
+    color_walls: int
+    color_background: int
+    color_fourtytwo: int
+    color_entry: int
+    color_exit: int
+    color_menutext: int
+    cell_size: int
+    perc_wall: float
+    perc_padding: float
 
     @classmethod
     def from_file(cls, path: str) -> "ConfigParser":
@@ -56,8 +66,16 @@ class ConfigParser:
 
     def _validate_and_build(values: Dict[str, str]) -> "ConfigParser":
 
-        required = {"WIDTH", "HEIGHT", "ENTRY", "EXIT", "SEED",
-                    "OUTPUT_FILE", "PERFECT"}
+        required = {
+            "WIDTH",
+            "HEIGHT",
+            "ENTRY",
+            "EXIT",
+            "SEED",
+            "OUTPUT_FILE",
+            "PERFECT",
+        }
+
         missing = required - values.keys()
 
         try:
@@ -83,6 +101,38 @@ class ConfigParser:
             if entry == exit_:
                 raise ConfigError("ENTRY and EXIT must be different")
 
+            music_file = ConfigParser._parse_bool(values["MUSIC_FILE"],
+                                                  "MUSIC_FILE")
+
+            color_walls = ConfigParser._parse_hex_color(
+                values["COLOR_WALLS"], "COLOR_WALLS"
+            )
+            color_background = ConfigParser._parse_hex_color(
+                values["COLOR_BACKGROUND"], "COLOR_BACKGROUND"
+            )
+            color_fourtytwo = ConfigParser._parse_hex_color(
+                values["COLOR_FOURTYTWO"], "COLOR_FOURTYTWO"
+            )
+            color_entry = ConfigParser._parse_hex_color(
+                values["COLOR_ENTRY"], "COLOR_ENTRY"
+            )
+            color_exit = ConfigParser._parse_hex_color(
+                values["COLOR_EXIT"], "COLOR_EXIT"
+            )
+            color_menutext = ConfigParser._parse_hex_color(
+                values["COLOR_MENUTEXT"], "COLOR_MENUTEXT"
+            )
+
+            cell_size = ConfigParser._parse_positive_int(
+                values["CELL_SIZE"], "CELL_SIZE"
+            )
+
+            perc_wall = ConfigParser._parse_percentage(
+                values["PERC_WALL"], "PERC_WALL"
+            )
+            perc_padding = ConfigParser._parse_percentage(
+                values["PERC_PADDING"], "PERC_PADDING"
+            )
             return ConfigParser(
                 width=width,
                 height=height,
@@ -91,7 +141,18 @@ class ConfigParser:
                 seed=seed,
                 output_file=output_file,
                 perfect=perfect,
+                music_file=music_file,
+                color_walls=color_walls,
+                color_background=color_background,
+                color_fourtytwo=color_fourtytwo,
+                color_entry=color_entry,
+                color_exit=color_exit,
+                color_menutext=color_menutext,
+                cell_size=cell_size,
+                perc_wall=perc_wall,
+                perc_padding=perc_padding,
             )
+
         except ConfigError as e:
             print(f"{RD}Error: {e}{R}")
             print(f"\n{RD}Please reconfigure your config file!{R}")
@@ -122,6 +183,32 @@ class ConfigParser:
         if val == "false":
             return False
         raise ConfigError(f"{name} must be True or False")
+
+    def _parse_hex_color(value: str, name: str) -> int:
+        if not value.startswith("0x"):
+            raise ConfigError(f"{name} must start with 0x")
+
+        try:
+            result = int(value, 16)
+        except ValueError:
+            raise ConfigError(f"{name} must be a valid hexadecimal value")
+
+        if result < 0 or result > 0xFFFFFFFF:
+            raise ConfigError(f"{name} must be in ARGB hex format 0xAARRGGBB")
+
+        return result
+
+    def _parse_percentage(value: str, name: str) -> float:
+        try:
+            result = float(value)
+        except ValueError:
+            raise ConfigError(f"{name} must be a float")
+
+        if result < 0 or result >= 1:
+            raise ConfigError(f"{name} must be equal to or greater"
+                              "than 0 and smaller than 1")
+
+        return result
 
     def _validate_bounds(
         coord: Tuple[int, int],
