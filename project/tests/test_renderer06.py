@@ -5,7 +5,7 @@ from tests import MlxContext, ImageBuffer, MazeRenderer
 from tests import (write_hexadecimal_map_to_file,
                    convert_cell_path_to_directions)
 from tests import SinglePathSolver
-from tests import loop_handler, reload_handler, close_viewport_handler, vis_path_handler
+from tests import loop_handler, close_viewport, key_handler_factory
 import sys
 import time
 
