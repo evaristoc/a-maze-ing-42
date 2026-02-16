@@ -44,10 +44,16 @@ def loop_handler(params: list) -> None:
         renderer.draw(img, [renderer.animations["elements"]["exit"]["target"]], {"exit": renderer.animations["elements"]["exit"]["in_color"]})
         renderer.draw(img, [renderer.animations["elements"]["entry"]["target"]], {"entrance": renderer.animations["elements"]["entry"]["in_color"]})
         renderer.renderer_queue.pop(0)
+    elif renderer.renderer_queue[0] == "path":
+        current = next(renderer.animations["elements"]["path"]["target"], None)
+        if current is not None:
+            renderer.draw(img, [[current]], {"path": renderer.animations["elements"]["path"]["in_color"]})
+        else:
+            renderer.renderer_queue.pop(0)
     viewport.add_img(img)
     return 0
 
-def close_viewport_handler(mlx_ptr: int) -> None:
+def exit_loop(mlx_ptr: int) -> None:
     try:
         print("Exiting the mlx loop...")
         mlx.Mlx().mlx_loop_exit(mlx_ptr)
@@ -56,7 +62,8 @@ def close_viewport_handler(mlx_ptr: int) -> None:
         sys.exit(1)
 
 def update(params: list) -> None:
-    context, viewport, img, renderer = params
+    context, viewport, img, renderer, _ = params
+    print("Reloading...")
     try:
         config = ConfigParser.from_file(config_path)
         config = config.config_parser_output_into_dict(config)
@@ -90,8 +97,10 @@ def update(params: list) -> None:
                                   config["output_file"]
                                   )
 
-    path = convert_cell_path_to_directions(maze, path_for_file)
-    print(path)
+    directions = convert_cell_path_to_directions(maze, path_for_file)
+    print(directions, len(directions))
+    sol_path = [(c, d) for c, d in zip(solution[0][1:-1],directions[1:])]
+    print(sol_path, len(sol_path))
 
     default_options = {"MUSIC_FILE": True,
                        "COLOR_WALLS": 0xFF00AAAA,
@@ -128,7 +137,6 @@ def update(params: list) -> None:
 
     renderer = MazeRenderer(cell_size, perc_wall, perc_pad)
 
-
     if config["color_background"]:
         color_background = config["color_background"]
     else:
@@ -150,7 +158,7 @@ def update(params: list) -> None:
     else:
         color_exit = default_options["COLOR_EXIT"]
 
-    renderer.renderer_queue = ["background", "walls", "doors"]
+    renderer.renderer_queue = ["background", "walls", "doors", "path"]
     renderer.animations = {
         "globals":{
             "frame_count": 0
@@ -176,23 +184,41 @@ def update(params: list) -> None:
                 "target": [cell for rows in maze.two_dimensional_cell_grid for cell in rows if isinstance(cell, ExitCell)],
                 "in_color": color_exit
             },
+            "path": {
+                "target": (state for state in sol_path),
+                "in_color": 0xFFDDDDDD,
+                "on": True
+            }            
         }}
-    context.mlxbinding.mlx_key_hook(viewport.viewport_ptr, reload_handler, [context, viewport, img, renderer])
-    context.mlxbinding.mlx_hook(viewport.viewport_ptr, 33, 0, close_viewport_handler, context.mlx_ptr)
+    context.mlxbinding.mlx_hook(viewport.viewport_ptr, 33, 0, exit_loop, context.mlx_ptr)
+    context.mlxbinding.mlx_key_hook(viewport.viewport_ptr, key_handler_factory, [context, viewport, img, renderer, sol_path])
     context.mlxbinding.mlx_loop_hook(context.mlx_ptr, loop_handler, [context, viewport, img, renderer])
     return
-
-def reload_handler(keycode: int, params: list) -> int:
-    # params: [context, viewport, renderer]
     
-    # 1. ESC to Close (Safety)
-    if keycode == 65307: # ESC key
-        # Call your close logic
-        return 0
+def vis_path(params: list) -> int:
+    # params: [viewport, img, renderer, state]
+    _, viewport, img, renderer, state = params
+    print("Path handling...")
+    if not renderer.animations["elements"]["path"]["on"]:
+        for c, d in state:
+            renderer.draw(img, [[(c, d)]], {"path": renderer.animations["elements"]["path"]["in_color"]})
+            renderer.animations["elements"]["path"]["on"] = True
+    else:
+        for c, d in state:
+            print(c, d)
+            renderer.draw(img, [[(c, d)]], {"path": renderer.animations["elements"]["background"]["color"]})
+            renderer.animations["elements"]["path"]["on"] = False
+    viewport.add_img(img)         
+    return
 
-    # 2. 'R' to Reload
+def key_handler_factory(keycode: int, params: list) -> int:
+    # params: [context, viewport, img, renderer, state]
+    if keycode == 65307: # ESC key
+        exit_loop(params[0].mlx_ptr)
+        return 0
+    if keycode == 112: # 'p' key
+        vis_path(params)
     if keycode == 114: # 'r' key
-        print("Reloading...")
         update(params)
         
     return 0
