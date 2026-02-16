@@ -5,7 +5,7 @@ from tests import MlxContext, ImageBuffer, MazeRenderer
 from tests import (write_hexadecimal_map_to_file,
                    convert_cell_path_to_directions)
 from tests import SinglePathSolver
-from tests import loop_handler, close_viewport, key_handler_factory
+from tests import loop_handler, exit_loop, key_handler_factory
 import sys
 import time
 
@@ -164,16 +164,13 @@ def main() -> None:
     time.sleep(2)
 
     # event hooks
-    context.mlxbinding.mlx_key_hook(viewport.viewport_ptr,
-                                    reload_handler,
-                                    [context, viewport, image, renderer])
-    context.mlxbinding.mlx_key_hook(viewport.viewport_ptr,
-                                    vis_path_handler,
-                                    [viewport, image, renderer, sol_path])
     context.mlxbinding.mlx_hook(viewport.viewport_ptr,
                                 33, 0,
-                                close_viewport_handler,
+                                exit_loop,
                                 context.mlx_ptr)
+    context.mlxbinding.mlx_key_hook(viewport.viewport_ptr,
+                                    key_handler_factory,
+                                    [context, viewport, image, renderer, sol_path])
     context.mlxbinding.mlx_loop_hook(context.mlx_ptr,
                                      loop_handler,
                                      [context, viewport, image, renderer])

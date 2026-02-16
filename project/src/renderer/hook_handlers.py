@@ -53,7 +53,7 @@ def loop_handler(params: list) -> None:
     viewport.add_img(img)
     return 0
 
-def close_viewport(mlx_ptr: int) -> None:
+def exit_loop(mlx_ptr: int) -> None:
     try:
         print("Exiting the mlx loop...")
         mlx.Mlx().mlx_loop_exit(mlx_ptr)
@@ -191,31 +191,31 @@ def update(params: list) -> None:
                 "on": True
             }            
         }}
+    context.mlxbinding.mlx_hook(viewport.viewport_ptr, 33, 0, exit_loop, context.mlx_ptr)
     context.mlxbinding.mlx_key_hook(viewport.viewport_ptr, key_factory_handler, [context, viewport, img, renderer, sol_path])
-    context.mlxbinding.mlx_hook(viewport.viewport_ptr, 33, 0, close_viewport, context.mlx_ptr)
     context.mlxbinding.mlx_loop_hook(context.mlx_ptr, loop_handler, [context, viewport, img, renderer])
     return
     
 def vis_path(params: list) -> int:
     # params: [viewport, img, renderer, state]
-    context, viewport, img, renderer, state = params
-        print("Path handling...")
-        if not renderer.animations["elements"]["path"]["on"]:
-            for c, d in state:
-                renderer.draw(img, [[(c, d)]], {"path": renderer.animations["elements"]["path"]["in_color"]})
-                renderer.animations["elements"]["path"]["on"] = True
-        else:
-            for c, d in state:
-                print(c, d)
-                renderer.draw(img, [[(c, d)]], {"path": renderer.animations["elements"]["background"]["color"]})
-                renderer.animations["elements"]["path"]["on"] = False
-        viewport.add_img(img)         
+    _, viewport, img, renderer, state = params
+    print("Path handling...")
+    if not renderer.animations["elements"]["path"]["on"]:
+        for c, d in state:
+            renderer.draw(img, [[(c, d)]], {"path": renderer.animations["elements"]["path"]["in_color"]})
+            renderer.animations["elements"]["path"]["on"] = True
+    else:
+        for c, d in state:
+            print(c, d)
+            renderer.draw(img, [[(c, d)]], {"path": renderer.animations["elements"]["background"]["color"]})
+            renderer.animations["elements"]["path"]["on"] = False
+    viewport.add_img(img)         
     return
 
 def key_handler_factory(keycode: int, params: list) -> int:
     # params: [context, viewport, img, renderer, state]
     if keycode == 65307: # ESC key
-        close_viewport(viewport.viewport_ptr)
+        exit_loop(params[0].mlx_ptr)
         return 0
     if keycode == 112: # 'p' key
         vis_path(params)
