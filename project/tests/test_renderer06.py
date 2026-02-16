@@ -123,7 +123,7 @@ def main() -> None:
     else:
         color_exit = default_options["COLOR_EXIT"]
 
-    renderer.renderer_queue = ["background", "walls", "doors"]
+    renderer.renderer_queue = ["background", "walls", "doors", "path"]
     renderer.animations = {
         "globals": {
             "frame_count": 0
