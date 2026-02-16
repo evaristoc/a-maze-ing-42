@@ -186,7 +186,8 @@ def update(params: list) -> None:
             },
             "path": {
                 "target": (state for state in sol_path),
-                "in_color": 0xFFDDDDDD
+                "in_color": 0xFFDDDDDD,
+                "on": True
             }            
         }}
     context.mlxbinding.mlx_key_hook(viewport.viewport_ptr, reload_handler, [context, viewport, img, renderer])
@@ -196,15 +197,28 @@ def update(params: list) -> None:
 
 def reload_handler(keycode: int, params: list) -> int:
     # params: [context, viewport, renderer]
-    
-    # 1. ESC to Close (Safety)
     if keycode == 65307: # ESC key
         # Call your close logic
         return 0
-
-    # 2. 'R' to Reload
     if keycode == 114: # 'r' key
         print("Reloading...")
         update(params)
         
+    return 0
+
+def vis_path_handler(keycode: int, params: list) -> int:
+    # params: [viewport, img, renderer, state]
+    viewport, img, renderer, state = params
+    if keycode == 112: # 'p' key
+        print("Path handling...")
+        if not renderer.animations["elements"]["path"]["on"]:
+            for c, d in state:
+                renderer.draw(img, [[(c, d)]], {"path": renderer.animations["elements"]["path"]["in_color"]})
+                renderer.animations["elements"]["path"]["on"] = True
+        else:
+            for c, d in state:
+                print(c, d)
+                renderer.draw(img, [[(c, d)]], {"path": renderer.animations["elements"]["background"]["color"]})
+                renderer.animations["elements"]["path"]["on"] = False
+        viewport.add_img(img)         
     return 0

@@ -5,7 +5,7 @@ from tests import MlxContext, ImageBuffer, MazeRenderer
 from tests import (write_hexadecimal_map_to_file,
                    convert_cell_path_to_directions)
 from tests import SinglePathSolver
-from tests import loop_handler, reload_handler, close_viewport_handler
+from tests import loop_handler, reload_handler, close_viewport_handler, vis_path_handler
 import sys
 import time
 
@@ -156,7 +156,8 @@ def main() -> None:
             },
             "path": {
                 "target": (state for state in sol_path),
-                "in_color": 0xFFDDDDDD
+                "in_color": 0xFFDDDDDD,
+                "on": True
             }
         }}
 
@@ -166,6 +167,9 @@ def main() -> None:
     context.mlxbinding.mlx_key_hook(viewport.viewport_ptr,
                                     reload_handler,
                                     [context, viewport, image, renderer])
+    context.mlxbinding.mlx_key_hook(viewport.viewport_ptr,
+                                    vis_path_handler,
+                                    [viewport, image, renderer, sol_path])
     context.mlxbinding.mlx_hook(viewport.viewport_ptr,
                                 33, 0,
                                 close_viewport_handler,
@@ -182,11 +186,13 @@ def main() -> None:
     help_vp = context.create_new_viewport(300, 200, "Controls")
     help_vp.string_put(20, 30, color_menutext, " ---__\\.CONTROLS./__---")
     help_vp.string_put(20, 60, color_menutext,
-                       "ESC:\tExit program".expandtabs(8))
+                       "ESC:\tExit program".expandtabs(8)) #TODO
     help_vp.string_put(20, 90, color_menutext,
-                       "R:\tReload Maze".expandtabs(8))
+                       "r:\tReload Maze".expandtabs(8))
     help_vp.string_put(20, 120, color_menutext,
-                       "M:\tSolve".expandtabs(8))
+                       "m:\tSolve".expandtabs(8))
+    help_vp.string_put(20, 150, color_menutext,
+                       "p:\tHide/Show Path".expandtabs(8))
     context.start_loop()
     context.destroy_viewport(help_vp.viewport_ptr)
     context.destroy_viewport(viewport.viewport_ptr)
