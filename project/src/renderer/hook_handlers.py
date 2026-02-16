@@ -137,7 +137,6 @@ def update(params: list) -> None:
 
     renderer = MazeRenderer(cell_size, perc_wall, perc_pad)
 
-
     if config["color_background"]:
         color_background = config["color_background"]
     else:
@@ -192,7 +191,7 @@ def update(params: list) -> None:
             }            
         }}
     context.mlxbinding.mlx_hook(viewport.viewport_ptr, 33, 0, exit_loop, context.mlx_ptr)
-    context.mlxbinding.mlx_key_hook(viewport.viewport_ptr, key_factory_handler, [context, viewport, img, renderer, sol_path])
+    context.mlxbinding.mlx_key_hook(viewport.viewport_ptr, key_handler_factory, [context, viewport, img, renderer, sol_path])
     context.mlxbinding.mlx_loop_hook(context.mlx_ptr, loop_handler, [context, viewport, img, renderer])
     return
     

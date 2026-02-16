@@ -4,7 +4,7 @@ import mlx
 from tests import MlxContext, ImageBuffer, MazeRenderer
 from tests import (write_hexadecimal_map_to_file,
                    convert_cell_path_to_directions)
-from tests import SinglePathSolver
+from tests import SinglePathSolver, ShortestPathSolver
 from tests import loop_handler, exit_loop, key_handler_factory
 import sys
 import time
@@ -38,13 +38,14 @@ def main() -> None:
     maze.place_entry_and_exit_cells(config["entry"], config["exit"])
     if config["perfect"] is True:
         maze.generate_perfect_maze()
+        perfect_solver = SinglePathSolver(maze)
+        solution = perfect_solver.solve()
     elif config["perfect"] is False:
         maze.generate_simple_maze()
+        short_path_solver = ShortestPathSolver(maze)
+        solution = short_path_solver.solve()
 
-    # maze.randomly_remove_some_walls(0.6)
-    perfect_solver = SinglePathSolver(maze)
-    solution = perfect_solver.solve()
-    print(solution, len(solution))
+    # print(solution, len(solution))
 
     for path in solution:
         path_for_file = path
@@ -183,7 +184,7 @@ def main() -> None:
     help_vp = context.create_new_viewport(300, 200, "Controls")
     help_vp.string_put(20, 30, color_menutext, " ---__\\.CONTROLS./__---")
     help_vp.string_put(20, 60, color_menutext,
-                       "ESC:\tExit program".expandtabs(8)) #TODO
+                       "ESC:\tExit program".expandtabs(8))  # TODO
     help_vp.string_put(20, 90, color_menutext,
                        "r:\tReload Maze".expandtabs(8))
     help_vp.string_put(20, 120, color_menutext,

@@ -13,8 +13,10 @@ from .maze_path_generators import (MazePathGenerator,
                                    SimpleMazeGenerator,
                                    PerfectMazeDFSGenerator)
 
-from .renderer import (MlxContext, Viewport, ImageBuffer, MazeRenderer, loop_handler, exit_loop, key_handler_factory)
-from .maze_solvers import (MazeSolver, SinglePathSolver, AllPathsSolver)
+from .renderer import (MlxContext, Viewport, ImageBuffer, MazeRenderer,
+                       loop_handler, exit_loop, key_handler_factory)
+from .maze_solvers import (MazeSolver, SinglePathSolver,
+                           AllPathsSolver, ShortestPathSolver)
 
 from .sound_effects_and_music import SoundManager
 
@@ -25,5 +27,6 @@ __all__ = ["ConfigParser", "ConfigError", "write_hexadecimal_map_to_file",
            "ImageBuffer", "MazeRenderer",
            "PerfectMazeDFSGenerator",
            "MazeSolver", "SinglePathSolver", "AllPathsSolver",
+           "ShortestPathSolver",
            "loop_handler", "exit_loop", "key_handler_factory",
            "convert_cell_path_to_directions", "SoundManager"]
