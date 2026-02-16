@@ -44,6 +44,12 @@ def loop_handler(params: list) -> None:
         renderer.draw(img, [renderer.animations["elements"]["exit"]["target"]], {"exit": renderer.animations["elements"]["exit"]["in_color"]})
         renderer.draw(img, [renderer.animations["elements"]["entry"]["target"]], {"entrance": renderer.animations["elements"]["entry"]["in_color"]})
         renderer.renderer_queue.pop(0)
+    elif renderer.renderer_queue[0] == "path":
+        current = next(renderer.animations["elements"]["path"]["target"], None)
+        if current is not None:
+            renderer.draw(img, [[current]], {"path": renderer.animations["elements"]["path"]["in_color"]})
+        else:
+            renderer.renderer_queue.pop(0)
     viewport.add_img(img)
     return 0
 
@@ -90,8 +96,10 @@ def update(params: list) -> None:
                                   config["output_file"]
                                   )
 
-    path = convert_cell_path_to_directions(maze, path_for_file)
-    print(path)
+    directions = convert_cell_path_to_directions(maze, path_for_file)
+    print(directions, len(directions))
+    sol_path = [(c, d) for c, d in zip(solution[0][1:-1],directions[1:])]
+    print(sol_path, len(sol_path))
 
     default_options = {"MUSIC_FILE": True,
                        "COLOR_WALLS": 0xFF00AAAA,
@@ -150,7 +158,7 @@ def update(params: list) -> None:
     else:
         color_exit = default_options["COLOR_EXIT"]
 
-    renderer.renderer_queue = ["background", "walls", "doors"]
+    renderer.renderer_queue = ["background", "walls", "doors", "path"]
     renderer.animations = {
         "globals":{
             "frame_count": 0
@@ -176,6 +184,10 @@ def update(params: list) -> None:
                 "target": [cell for rows in maze.two_dimensional_cell_grid for cell in rows if isinstance(cell, ExitCell)],
                 "in_color": color_exit
             },
+            "path": {
+                "target": (state for state in sol_path),
+                "in_color": 0xFFDDDDDD
+            }            
         }}
     context.mlxbinding.mlx_key_hook(viewport.viewport_ptr, reload_handler, [context, viewport, img, renderer])
     context.mlxbinding.mlx_hook(viewport.viewport_ptr, 33, 0, close_viewport_handler, context.mlx_ptr)

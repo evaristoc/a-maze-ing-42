@@ -96,8 +96,8 @@ class MazeRenderer(Renderer):
                     self.__draw_cell_interior(target_img, c, elements["entrance"])
                 if "exit" in elements and isinstance(c, ExitCell):
                     self.__draw_cell_interior(target_img, c, elements["exit"])
-                # if "path" in elements:
-                #     self.__draw_triangle_in_cell(target_img, c, 0xFFFFFFFF, "right")
+                if "path" in elements:
+                    self.__draw_triangle_in_cell(target_img, c, elements["path"])
                 # if "hall" in elements:
                 #     self.__draw_cell_interior(target_img, c, elements["background"])
 
@@ -199,7 +199,8 @@ class MazeRenderer(Renderer):
                 for x in range(x_start, x_end + 1):
                     img.put_pixel(x, y, color)
 
-    def __draw_triangle_in_cell(self, img: Image, cell: Cell, color: int, direction: str) -> None:
+    def __draw_triangle_in_cell(self, img: Image, state: tuple, color: int) -> None:
+        cell, direction = state[0], state[1]
         x_cell = cell.cell_position_x
         y_cell = cell.cell_position_y
 
@@ -219,22 +220,22 @@ class MazeRenderer(Renderer):
         center_x = start_x + size // 2
         center_y = start_y + size // 2
 
-        if direction == "up":
+        if direction == "NORTH":
             x1, y1 = center_x, top
             x2, y2 = left, bottom
             x3, y3 = right, bottom
 
-        elif direction == "down":
+        elif direction == "SOUTH":
             x1, y1 = center_x, bottom
             x2, y2 = left, top
             x3, y3 = right, top
 
-        elif direction == "left":
+        elif direction == "WEST":
             x1, y1 = left, center_y
             x2, y2 = right, top
             x3, y3 = right, bottom
 
-        elif direction == "right":
+        elif direction == "EAST":
             x1, y1 = right, center_y
             x2, y2 = left, top
             x3, y3 = left, bottom
