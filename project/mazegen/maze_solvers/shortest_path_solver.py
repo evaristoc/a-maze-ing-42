@@ -1,5 +1,5 @@
 from collections import deque
-from src.maze_solvers.base_solver import MazeSolver
+from mazegen.maze_solvers.base_solver import MazeSolver
 
 
 class ShortestPathSolver(MazeSolver):

@@ -1,4 +1,4 @@
-from src.maze_path_generators.base_generator import MazePathGenerator
+from mazegen.maze_path_generators.base_generator import MazePathGenerator
 
 
 class PerfectMazeDFSGenerator(MazePathGenerator):
