@@ -8,7 +8,10 @@ from tests import (write_hexadecimal_map_to_file,
                    convert_cell_path_to_directions)
 from tests import SinglePathSolver, ShortestPathSolver
 from tests import loop_handler, exit_loop, key_handler_factory
+from dataclasses import dataclass
+from typing import List, Optional, Callable
 
+@dataclass
 class AppState:
     context: MlxContext
     viewport: Optional[any] = None  # Replace 'any' with actual Viewport type
