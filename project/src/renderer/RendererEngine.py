@@ -1,4 +1,4 @@
-from typing import Sequence, Union
+from typing import cast
 from src.maze_factory.cells import (
                                         Cell,
                                         ExitCell,

@@ -28,7 +28,7 @@ class Image:
 
     # getters and setters
     @property
-    def img_ptr(self) -> Optional[int]:
+    def img_ptr(self) -> int:
         return self._img
 
     @img_ptr.setter
@@ -36,11 +36,11 @@ class Image:
         self._img = imgptr
 
     @property
-    def data(self) -> Optional[memoryview]:
+    def data(self) -> memoryview:
         return self._data
 
     @data.setter
-    def data(self, data: Optional[memoryview]) -> None:
+    def data(self, data: memoryview) -> None:
         self._data = data
 
     @property
