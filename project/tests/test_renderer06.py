@@ -1,5 +1,5 @@
 from tests import Maze, ConfigError, ConfigParser
-from tests import (Cell, ExitCell, EntryCell, FourtyTwoCell)
+from tests import ExitCell, EntryCell, FourtyTwoCell
 import mlx
 from tests import MlxContext, ImageBuffer, MazeRenderer
 from tests import (write_hexadecimal_map_to_file,
@@ -7,7 +7,7 @@ from tests import (write_hexadecimal_map_to_file,
 from tests import SinglePathSolver, ShortestPathSolver
 from tests import loop_handler, exit_loop, key_handler_factory
 import sys
-import time
+# import time
 
 # Pick a seed, just a random number, fill in the config file in project.
 # Then generate the maze from the project folder by runnning it with:
@@ -162,7 +162,7 @@ def main() -> None:
             }
         }}
 
-    time.sleep(2)
+    # time.sleep(2)
 
     # event hooks
     context.mlxbinding.mlx_hook(viewport.viewport_ptr,
@@ -171,7 +171,8 @@ def main() -> None:
                                 context.mlx_ptr)
     context.mlxbinding.mlx_key_hook(viewport.viewport_ptr,
                                     key_handler_factory,
-                                    [context, viewport, image, renderer, sol_path])
+                                    [context, viewport, image, renderer,
+                                     sol_path])
     context.mlxbinding.mlx_loop_hook(context.mlx_ptr,
                                      loop_handler,
                                      [context, viewport, image, renderer])
@@ -187,9 +188,9 @@ def main() -> None:
                        "ESC:\tExit program".expandtabs(8))  # TODO
     help_vp.string_put(20, 90, color_menutext,
                        "r:\tReload Maze".expandtabs(8))
+    # help_vp.string_put(20, 120, color_menutext,
+    #                    "m:\tSolve".expandtabs(8))
     help_vp.string_put(20, 120, color_menutext,
-                       "m:\tSolve".expandtabs(8))
-    help_vp.string_put(20, 150, color_menutext,
                        "p:\tHide/Show Path".expandtabs(8))
     context.start_loop()
     context.destroy_viewport(help_vp.viewport_ptr)

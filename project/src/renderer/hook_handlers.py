@@ -11,7 +11,7 @@ from src.renderer import MazeRenderer
 #import mlx
 #from tests import MlxContext, ImageBuffer, MazeRenderer
 from src.map import write_hexadecimal_map_to_file, convert_cell_path_to_directions
-from src.maze_solvers.single_path_solver import SinglePathSolver
+from src.maze_solvers import SinglePathSolver, ShortestPathSolver
 import sys
 import time
 
@@ -79,15 +79,15 @@ def update(params: list) -> None:
 
     maze.place_fourty_two_glyph_at_maze_center()
     maze.place_entry_and_exit_cells(config["entry"], config["exit"])
+    # maze.randomly_remove_some_walls(0.6)
     if config["perfect"] is True:
         maze.generate_perfect_maze()
+        perfect_solver = SinglePathSolver(maze)
+        solution = perfect_solver.solve()
     elif config["perfect"] is False:
         maze.generate_simple_maze()
-
-    # maze.randomly_remove_some_walls(0.6)
-    perfect_solver = SinglePathSolver(maze)
-    solution = perfect_solver.solve()
-    print(solution)
+        short_path_solver = ShortestPathSolver(maze)
+        solution = short_path_solver.solve()
 
     for path in solution:
         path_for_file = path
