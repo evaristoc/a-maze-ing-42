@@ -3,7 +3,7 @@ set -e
 
 # Variables
 VENV=".venv"
-MINILIBX_DIR="third_party/minilibx"
+MINILIBX_DIR="modules/minilibx"
 TARGET_WHEEL="mlx-2.2-py3-none-manylinux1_x86_64.whl"
 TARGET_WHEEL_PATH="$MINILIBX_DIR/$TARGET_WHEEL"
 

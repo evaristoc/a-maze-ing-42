@@ -16,7 +16,7 @@ from .maze_path_generators import (MazePathGenerator,
 from .maze_solvers import (MazeSolver, SinglePathSolver,
                            AllPathsSolver, ShortestPathSolver)
 
-__all__ = ["ConfigParser", "ConfigError", "write_hexadecimal_map_to_file",
+__all__ = ["write_hexadecimal_map_to_file",
            "Cell", "FourtyTwoCell", "EntryCell", "ExitCell", "Maze",
            "MazePathGenerator", "SimpleMazeGenerator",
            "PerfectMazeDFSGenerator", "PerfectMazeDFSGenerator",

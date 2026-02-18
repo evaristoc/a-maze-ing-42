@@ -14,5 +14,5 @@ classifiers = [
     "Programming Language :: Python :: 3",
 ]
 
-[tool.setuptools]
-packages = ["mazegen"]
+[tool.setuptools.packages.find]
+where = ["src"]
