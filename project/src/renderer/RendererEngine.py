@@ -1,10 +1,10 @@
 from typing import cast
-from src.maze_factory.cells import (
-                                        Cell,
-                                        ExitCell,
-                                        EntryCell,
-                                        FourtyTwoCell
-                                    )
+from mazegen import (
+                    Cell,
+                    ExitCell,
+                    EntryCell,
+                    FourtyTwoCell
+                )
 from src.renderer.Image import Image
 
 

@@ -1,5 +1,6 @@
 import mlx
 import sys
+from src.renderer.AppResources import AppResources
 
 def loop_handler(params: list) -> None:
     viewport, image, renderer = params
@@ -86,7 +87,7 @@ def exit_loop(mlx_ptr: int) -> None:
         sys.exit(1)
 
 def vis_path(params: list) -> int:
-    viewport, img, renderer, sol_path = params
+    viewport, image, renderer, sol_path = params
     print("Path handling...")
     if not renderer.animations["elements"]["path"]["on"]:
         for c, d in sol_path:

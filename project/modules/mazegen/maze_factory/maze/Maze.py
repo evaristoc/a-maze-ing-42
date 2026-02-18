@@ -265,14 +265,14 @@ class Maze(ABC):
     # ───────────── Abstract Generation ─────────────
 
     def generate_simple_maze(self) -> None:
-        from src.maze_path_generators.simple_generator import (
+        from mazegen.maze_path_generators.simple_generator import (
             SimpleMazeGenerator
         )
 
         SimpleMazeGenerator(self).generate()
 
     def generate_perfect_maze(self) -> None:
-        from src.maze_path_generators.perfect_dfs_generator import (
+        from mazegen.maze_path_generators.perfect_dfs_generator import (
             PerfectMazeDFSGenerator
         )
 

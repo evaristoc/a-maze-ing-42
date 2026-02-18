@@ -1,25 +1,14 @@
 import sys
 import mlx
-from src import Maze, ConfigError, ConfigParser
-from src import ExitCell, EntryCell, FourtyTwoCell
-from src import MlxContext, ImageBuffer, MazeRenderer
-from src import (write_hexadecimal_map_to_file,
-                   convert_cell_path_to_directions)
-from src import SinglePathSolver, ShortestPathSolver
+from mazegen import Maze, ExitCell, EntryCell, FourtyTwoCell
+from mazegen import (
+    write_hexadecimal_map_to_file,
+    convert_cell_path_to_directions
+)
+from mazegen import SinglePathSolver, ShortestPathSolver
+from src import MlxContext, AppResources, ConfigError, ConfigParser, ImageBuffer, MazeRenderer
 from src import loop_handler, exit_loop, key_handler_controller
-from dataclasses import dataclass
-from typing import List, Optional, Callable
 
-@dataclass
-class AppResources:
-    context: MlxContext
-    viewport: Optional[Viewport] = None
-    image: Optional[Image] = None
-    renderer: Optional[Renderer] = None
-    sol_path: List = None
-    update_func: Optional[Callable] = None
-    config_file: str = ""
-    ui_viewport: Optional[Viewport] = None
 
 default_options = {"MUSIC_FILE": True,
                     "COLOR_WALLS": 0xFF00AAAA,
@@ -31,6 +20,7 @@ default_options = {"MUSIC_FILE": True,
                     "CELL_SIZE": 60,
                     "PERC_WALL": 0.2,
                     "PERC_PADDING": 0.2}
+
 
 def render_maze(params: AppResources) -> None:
     # context, viewport, image, renderer, sol_path, update, configurationfile, ui = params
@@ -70,7 +60,8 @@ def render_maze(params: AppResources) -> None:
                                   )
 
     directions = convert_cell_path_to_directions(maze, path_for_file)
-    sol_path = [(c, d) for c, d in zip(solution[0][1:-1],directions[1:])]
+    params.sol_path = [(c, d)
+                       for c, d in zip(solution[0][1:-1], directions[1:])]
 
     #============================================
     #======= MazeGeneretor ends =================
@@ -99,12 +90,20 @@ def render_maze(params: AppResources) -> None:
         (maze_height - 1) * int(cell_size * perc_wall)))
 
     if params.image:
-        params.context.destroy_image(img.img_ptr)
+        params.context.destroy_image(params.image.img_ptr)
     if params.viewport:
         params.context.destroy_viewport(params.viewport.viewport_ptr)
 
-    params.viewport = params.context.create_new_viewport(img_width, img_height, "maze test")
-    params.image = params.context.create_new_image(ImageBuffer, img_width, img_height)
+    params.viewport = params.context.create_new_viewport(
+        img_width,
+        img_height,
+        "maze test"
+    )
+    params.image = params.context.create_new_image(
+        ImageBuffer,
+        img_width,
+        img_height
+    )
 
     params.renderer = MazeRenderer(cell_size, perc_wall, perc_pad)
 
@@ -161,7 +160,7 @@ def render_maze(params: AppResources) -> None:
                 "in_color": color_exit
             },
             "path": {
-                "target": (state for state in sol_path),
+                "target": (state for state in params.sol_path),
                 "in_color": 0xFFDDDDDD,
                 "on": True
             }
@@ -172,32 +171,45 @@ def render_maze(params: AppResources) -> None:
             color_menutext = config["color_menutext"]
         else:
             color_menutext = default_options["COLOR_MENUTEXT"]
-        params.ui_viewport = params.context.create_new_viewport()
-        params.ui_viewport.string_put(20, 30, color_menutext, " ---__\\.CONTROLS./__---")
+        params.ui_viewport = params.context.create_new_viewport(
+            300,
+            200,
+            "Controls"
+        )
+        params.ui_viewport.string_put(20, 30, color_menutext,
+                                      " ---__\\.CONTROLS./__---")
         params.ui_viewport.string_put(20, 60, color_menutext,
-                        "ESC:\tExit program".expandtabs(8))  # TODO
+                                      "ESC:\tExit program".expandtabs(8))  # TODO
         params.ui_viewport.string_put(20, 90, color_menutext,
-                        "r:\tReload Maze".expandtabs(8))
+                                      "r:\tReload Maze".expandtabs(8))
         params.ui_viewport.string_put(20, 120, color_menutext,
-                        "p:\tHide/Show Path".expandtabs(8))
+                                      "p:\tHide/Show Path".expandtabs(8))
     # event hooks
     params.context.mlxbinding.mlx_hook(params.viewport.viewport_ptr,
-                                33, 0,
-                                exit_loop,
-                                params.context.mlx_ptr)
+                                       33, 0,
+                                       exit_loop,
+                                       params.context.mlx_ptr)
     params.context.mlxbinding.mlx_key_hook(params.viewport.viewport_ptr,
-                                    key_handler_controller,
-                                    params)
+                                           key_handler_controller,
+                                           params)
     params.context.mlxbinding.mlx_loop_hook(params.context.mlx_ptr,
-                                     loop_handler,
-                                     [params.viewport,
-                                     params.image,
-                                     params.renderer])
+                                            loop_handler,
+                                            [
+                                                params.viewport,
+                                                params.image,
+                                                params.renderer
+                                            ])
 
 
 def main() -> None:
     if len(sys.argv) != 2:
         print("Usage:\tpython main.py <config_file>")
+        return
+    try:
+        config = ConfigParser.from_file(sys.argv[1])
+        config = config.config_parser_output_into_dict(config)
+    except ConfigError as error:
+        print(f"Error:\t{error}")
         return
     config_file = sys.argv[1]
     context = MlxContext(mlx.Mlx())

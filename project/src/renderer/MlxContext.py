@@ -1,5 +1,4 @@
 import mlx # Assuming your binding is in a file named mlx.py
-from typing import Any, Optional
 from src.renderer.Viewport import Viewport
 from src.renderer.Image import Image
 import sys
