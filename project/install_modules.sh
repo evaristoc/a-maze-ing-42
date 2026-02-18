@@ -3,7 +3,8 @@ set -e
 
 # Variables
 VENV=".venv"
-MINILIBX_DIR="third_party/minilibx"
+MINILIBX_DIR="modules/minilibx"
+MAZEGEN_DIR="modules/mazegen/mazegen"
 TARGET_WHEEL="mlx-2.2-py3-none-manylinux1_x86_64.whl"
 TARGET_WHEEL_PATH="$MINILIBX_DIR/$TARGET_WHEEL"
 
@@ -41,4 +42,16 @@ else
 fi
 
 echo "MiniLibX setup complete!"
+
+echo "Installing Mazegen lib..."
+"$VENV/bin/python" -m pip install -e "$MAZEGEN_DIR"
+# 4. Verify installation
+echo "Verifying Mazegen installation..."
+if "$VENV/bin/python3" -c 'import mazegen; m = mazegen.__file__; print("Success:", m)'; then
+    echo "Mazegen installation verified."
+else
+    echo "ERROR: Mazegen installation failed."
+    exit 1
+fi
+
 echo "You can now install the project in editable mode via the Makefile."

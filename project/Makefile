@@ -19,9 +19,9 @@ $(VENV)/bin/activate:
 install-deps: 
 	@echo "Installing Python dependencies..." 
 	.venv/bin/pip install -e .[dev] 
-	@echo "Installing MiniLibX..." 
-	@chmod +x install_minilibx.sh 
-	./install_minilibx.sh 
+	@echo "Installing modules..." 
+	@chmod +x install_modules.sh 
+	./install_modules.sh 
 	@echo "Handshake complete. Dependencies are synced." 
 	
 # # Run the project 

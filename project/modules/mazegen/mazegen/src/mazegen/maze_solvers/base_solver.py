@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
-from src.maze_factory import Maze
-from src.maze_factory import Cell
+from mazegen.maze_factory import Maze
+from mazegen.maze_factory import Cell
 
 
 class MazeSolver(ABC):

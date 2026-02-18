@@ -1,6 +1,6 @@
-from src.maze_path_generators.base_generator import MazePathGenerator
+from mazegen.maze_path_generators.base_generator import MazePathGenerator
 
-from src.maze_path_generators.perfect_dfs_generator import (
+from mazegen.maze_path_generators.perfect_dfs_generator import (
     PerfectMazeDFSGenerator)
 
 
