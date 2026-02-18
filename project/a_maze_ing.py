@@ -1,26 +1,25 @@
 import sys
-import time
 import mlx
-from tests import Maze, ConfigError, ConfigParser
-from tests import ExitCell, EntryCell, FourtyTwoCell
-from tests import MlxContext, ImageBuffer, MazeRenderer
-from tests import (write_hexadecimal_map_to_file,
+from src import Maze, ConfigError, ConfigParser
+from src import ExitCell, EntryCell, FourtyTwoCell
+from src import MlxContext, ImageBuffer, MazeRenderer
+from src import (write_hexadecimal_map_to_file,
                    convert_cell_path_to_directions)
-from tests import SinglePathSolver, ShortestPathSolver
-from tests import loop_handler, exit_loop, key_handler_factory
+from src import SinglePathSolver, ShortestPathSolver
+from src import loop_handler, exit_loop, key_handler_controller
 from dataclasses import dataclass
 from typing import List, Optional, Callable
 
 @dataclass
-class AppState:
+class AppResources:
     context: MlxContext
-    viewport: Optional[any] = None  # Replace 'any' with actual Viewport type
-    image: Optional[any] = None     # Replace 'any' with actual Image type
-    renderer: Optional[any] = None
+    viewport: Optional[Viewport] = None
+    image: Optional[Image] = None
+    renderer: Optional[Renderer] = None
     sol_path: List = None
     update_func: Optional[Callable] = None
     config_file: str = ""
-    ui_viewport: Optional[any] = None
+    ui_viewport: Optional[Viewport] = None
 
 default_options = {"MUSIC_FILE": True,
                     "COLOR_WALLS": 0xFF00AAAA,
@@ -33,10 +32,10 @@ default_options = {"MUSIC_FILE": True,
                     "PERC_WALL": 0.2,
                     "PERC_PADDING": 0.2}
 
-def render_maze(params: list) -> None:
-    context, viewport, image, renderer, sol_path, update, configurationfile, ui = params
+def render_maze(params: AppResources) -> None:
+    # context, viewport, image, renderer, sol_path, update, configurationfile, ui = params
     try:
-        config = ConfigParser.from_file(configurationfile)
+        config = ConfigParser.from_file(params.config_file)
         config = config.config_parser_output_into_dict(config)
     except ConfigError as error:
         print(f"Error:\t{error}")
@@ -99,18 +98,15 @@ def render_maze(params: list) -> None:
     img_height = ((cell_size * maze_height) - (
         (maze_height - 1) * int(cell_size * perc_wall)))
 
-    if not viewport:
-        viewport = context.create_new_viewport(img_width, img_height, "maze test")
-    else:
-        context.destroy_viewport(viewport.viewport_ptr)
-        viewport = context.create_new_viewport(img_width, img_height, "maze test")
-    if not image:
-        image = context.create_new_image(ImageBuffer, img_width, img_height)
-    else:
-        context.destroy_image(img.img_ptr)
-        image = context.create_new_image(ImageBuffer, img_width, img_height)
-    
-    renderer = MazeRenderer(cell_size, perc_wall, perc_pad)
+    if params.image:
+        params.context.destroy_image(img.img_ptr)
+    if params.viewport:
+        params.context.destroy_viewport(params.viewport.viewport_ptr)
+
+    params.viewport = params.context.create_new_viewport(img_width, img_height, "maze test")
+    params.image = params.context.create_new_image(ImageBuffer, img_width, img_height)
+
+    params.renderer = MazeRenderer(cell_size, perc_wall, perc_pad)
 
     if config["color_background"]:
         color_background = config["color_background"]
@@ -133,8 +129,8 @@ def render_maze(params: list) -> None:
     else:
         color_exit = default_options["COLOR_EXIT"]
 
-    renderer.renderer_queue = ["background", "walls", "doors", "path"]
-    renderer.animations = {
+    params.renderer.renderer_queue = ["background", "walls", "doors", "path"]
+    params.renderer.animations = {
         "globals": {
             "frame_count": 0
         },
@@ -171,47 +167,50 @@ def render_maze(params: list) -> None:
             }
         }}
 
-    if not ui:
+    if not params.ui_viewport:
         if config["color_menutext"]:
             color_menutext = config["color_menutext"]
         else:
             color_menutext = default_options["COLOR_MENUTEXT"]
-        help_vp = context.create_new_viewport()
-        help_vp.string_put(20, 30, color_menutext, " ---__\\.CONTROLS./__---")
-        help_vp.string_put(20, 60, color_menutext,
+        params.ui_viewport = params.context.create_new_viewport()
+        params.ui_viewport.string_put(20, 30, color_menutext, " ---__\\.CONTROLS./__---")
+        params.ui_viewport.string_put(20, 60, color_menutext,
                         "ESC:\tExit program".expandtabs(8))  # TODO
-        help_vp.string_put(20, 90, color_menutext,
+        params.ui_viewport.string_put(20, 90, color_menutext,
                         "r:\tReload Maze".expandtabs(8))
-        # help_vp.string_put(20, 120, color_menutext,
-        #                    "m:\tSolve".expandtabs(8))
-        help_vp.string_put(20, 120, color_menutext,
+        params.ui_viewport.string_put(20, 120, color_menutext,
                         "p:\tHide/Show Path".expandtabs(8))
-        ui = help_vp
     # event hooks
-    context.mlxbinding.mlx_hook(viewport.viewport_ptr,
+    params.context.mlxbinding.mlx_hook(params.viewport.viewport_ptr,
                                 33, 0,
                                 exit_loop,
-                                context.mlx_ptr)
-    context.mlxbinding.mlx_key_hook(viewport.viewport_ptr,
-                                    key_handler_factory,
-                                    [context, viewport, image, renderer,
-                                     sol_path, config, update, ui])
-    context.mlxbinding.mlx_loop_hook(context.mlx_ptr,
+                                params.context.mlx_ptr)
+    params.context.mlxbinding.mlx_key_hook(params.viewport.viewport_ptr,
+                                    key_handler_controller,
+                                    params)
+    params.context.mlxbinding.mlx_loop_hook(params.context.mlx_ptr,
                                      loop_handler,
-                                     [context, viewport, image, renderer])
+                                     [params.viewport,
+                                     params.image,
+                                     params.renderer])
 
 
 def main() -> None:
     if len(sys.argv) != 2:
         print("Usage:\tpython main.py <config_file>")
         return
-    configurationfile = sys.argv[1]
+    config_file = sys.argv[1]
     context = MlxContext(mlx.Mlx())
-    params = [context, 0, 0, 0, [], render_maze, configurationfile, 0]
+    params = AppResources()
+    params.context = context
+    params.update_func = render_maze
+    params.config_file = config_file
     render_maze(params)
     context.start_loop()
-    context.destroy_viewport(params[-1].viewport_ptr)  # current ui vp
-    context.destroy_viewport(params[1].viewport_ptr)  # current maze vp
+    if params.ui_viewport:
+        context.destroy_viewport(params.ui_viewport.viewport_ptr)  # current ui vp
+    if params.viewport:
+        context.destroy_viewport(params.viewport.viewport_ptr)  # current maze vp
 
 
 if __name__ == "__main__":

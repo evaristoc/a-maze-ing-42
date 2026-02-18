@@ -21,11 +21,11 @@ from .collect_config_variables import (ConfigParser,
                                        ConfigError)
 
 from .renderer import (MlxContext, Viewport, ImageBuffer, MazeRenderer,
-                       loop_handler, exit_loop, key_handler_factory)
+                       loop_handler, exit_loop, key_handler_controller)
 
 from .sound_effects_and_music import SoundManager
 
 __all__ = ["Cell", "FourtyTwoCell", "EntryCell", "ExitCell", "Maze",
         "MlxContext", "Viewport", "ImageBuffer", "MazeRenderer",
-        "loop_handler", "exit_loop", "key_handler_factory",
+        "loop_handler", "exit_loop", "key_handler_controller",
         "SoundManager", "ConfigParser", "ConfigError"]
