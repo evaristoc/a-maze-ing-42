@@ -13,7 +13,7 @@ from .renderer import (
     MazeRenderer,
     AppResources,
     loop_handler,
-    exit_loop,
+    exit_loop_handler,
     key_handler_controller
 )
 
@@ -22,6 +22,6 @@ from .sound_effects_and_music import SoundManager
 __all__ = [
     "MlxContext", "Viewport", "Image", "ImageBuffer",
     "Renderer", "MazeRenderer", "AppResources",
-    "loop_handler", "exit_loop", "key_handler_controller",
+    "loop_handler", "exit_loop_handler", "key_handler_controller",
     "SoundManager", "ConfigParser", "ConfigError",
     ]

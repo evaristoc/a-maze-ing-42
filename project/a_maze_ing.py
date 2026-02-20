@@ -7,7 +7,7 @@ from mazegen import (
 )
 from mazegen import SinglePathSolver, ShortestPathSolver
 from src import MlxContext, AppResources, ConfigError, ConfigParser, ImageBuffer, MazeRenderer
-from src import loop_handler, exit_loop, key_handler_controller
+from src import loop_handler, exit_loop_handler, key_handler_controller
 
 
 default_options = {"MUSIC_FILE": True,
@@ -60,7 +60,7 @@ def render_maze(params: AppResources) -> None:
                                   )
 
     directions = convert_cell_path_to_directions(maze, path_for_file)
-    params.sol_path = [(c, d)
+    sol_path = [(c, d)
                        for c, d in zip(solution[0][1:-1], directions[1:])]
 
     #============================================
@@ -147,7 +147,10 @@ def render_maze(params: AppResources) -> None:
             "walls": {
                 "target": (cell for rows in maze.two_dimensional_cell_grid
                            for cell in rows),
-                "color": color_walls
+                "target_all": [cell for rows in maze.two_dimensional_cell_grid
+                           for cell in rows],
+                "color": color_walls,
+                "on": True
             },
             "entry": {
                 "target": [cell for rows in maze.two_dimensional_cell_grid
@@ -160,7 +163,8 @@ def render_maze(params: AppResources) -> None:
                 "in_color": color_exit
             },
             "path": {
-                "target": (state for state in params.sol_path),
+                "target": (state for state in sol_path),
+                "target_all": sol_path,
                 "in_color": 0xFFDDDDDD,
                 "on": True
             }
@@ -184,10 +188,12 @@ def render_maze(params: AppResources) -> None:
                                       "r:\tReload Maze".expandtabs(8))
         params.ui_viewport.string_put(20, 120, color_menutext,
                                       "p:\tHide/Show Path".expandtabs(8))
+        params.ui_viewport.string_put(20, 150, color_menutext,
+                                      "w:\tWalls Colors".expandtabs(8))
     # event hooks
     params.context.mlxbinding.mlx_hook(params.viewport.viewport_ptr,
                                        33, 0,
-                                       exit_loop,
+                                       exit_loop_handler,
                                        params.context.mlx_ptr)
     params.context.mlxbinding.mlx_key_hook(params.viewport.viewport_ptr,
                                            key_handler_controller,
