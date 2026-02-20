@@ -11,7 +11,6 @@ class AppResources:
     viewport: Optional[Viewport] = None
     image: Optional[Image] = None
     renderer: Optional[Renderer] = None
-    sol_path: List = None
     update_func: Optional[Callable] = None
     config_file: str = ""
     ui_viewport: Optional[Viewport] = None
