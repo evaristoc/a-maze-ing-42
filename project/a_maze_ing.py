@@ -166,7 +166,7 @@ def render_maze(params: AppResources) -> None:
                 "target": (state for state in sol_path),
                 "target_all": sol_path,
                 "in_color": 0xFFDDDDDD,
-                "on": False
+                "on": True
             }
         }}
 
