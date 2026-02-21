@@ -18,11 +18,11 @@
 
 # All values from MUSIC_FILE downwards have defaults to fall back on, comment them to use the defaults.
 
-WIDTH=20
+WIDTH=40
 HEIGHT=20
-ENTRY=2,3
-EXIT=13,12
-SEED=7
+ENTRY=0,0
+EXIT=36,19
+SEED=40
 OUTPUT_FILE=map_output.txt
 PERFECT=FALSE
 

@@ -25,8 +25,8 @@ install-deps:
 	@echo "Handshake complete. Dependencies are synced." 
 	
 # # Run the project 
-#run: install 
-# @$(PYTHON) -m amazeing 
+run:
+	@$(PYTHON) -m a_maze_ing config.txt
 
 # # Debug the project (using pdb) 
 # debug: 
