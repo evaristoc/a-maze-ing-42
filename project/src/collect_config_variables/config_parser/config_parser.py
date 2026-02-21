@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Tuple
-from src.collect_config_variables.error_handlers import ConfigError
+from collect_config_variables.error_handlers import ConfigError
 import sys
 RD = "\033[91m"
 R = "\033[0m"

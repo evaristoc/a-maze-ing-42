@@ -22,4 +22,5 @@ __all__ = ["write_hexadecimal_map_to_file",
            "PerfectMazeDFSGenerator", "PerfectMazeDFSGenerator",
            "MazeSolver", "SinglePathSolver", "AllPathsSolver",
            "ShortestPathSolver",
-           "convert_cell_path_to_directions"]
+           "convert_cell_path_to_directions",
+           "MazeGenerator"]
