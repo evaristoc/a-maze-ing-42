@@ -45,12 +45,14 @@ fi
 echo "MiniLibX setup complete!"
 
 echo "Installing Mazegen lib..."
-if test -f $MAZEGEN
-    echo $PWD
-    cp  $MAZEGEN $PWD/modules/$MAZEGEN
-    tar -xvf $PWD/modules/$MAZEGEN -C $PWD/modules
-    mkdir $MAZEGEN_DIR
+if test -f $MAZEGEN; then
+    # echo $PWD
+    cp  $MAZEGEN modules
+    tar -xvf modules/mazegen-1.0.tar.gz -C modules
     "$VENV/bin/python" -m pip install -e "$MAZEGEN_DIR"
+else
+    echo "unpacking failed"
+    exit 1
 fi
 
 # 4. Verify installation
