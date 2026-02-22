@@ -1,9 +1,11 @@
 .venv
 .env
 
-# external libs
+# modules libs
 # minilibx
 mlx_CLXV*/
+# mazegen
+mazegen*/
 
 #cached python
 *__pycache__*
