@@ -25,23 +25,31 @@ install-deps:
 	@echo "Handshake complete. Dependencies are synced." 
 	
 # # Run the project 
-#run: install 
-# @$(PYTHON) -m amazeing 
+run:
+	@$(PYTHON) -m a_maze_ing config.txt
 
 # # Debug the project (using pdb) 
-# debug: 
-# @$(PYTHON) -m pdb -m amazeing 
+debug: 
+	@$(PYTHON) -m pdb -m a_maze_ing.py config.txt 
 
 # # Linting and type checking 
-# lint: 
-# @echo "Running flake8..." 
-# @$(PYTHON) -m flake8 amazeing --max-line-length=88 
-# @echo "Running mypy..." 
-# @$(PYTHON) -m mypy amazeing --strict 
+lint-mypy: 
+	@echo "Running mypy..." 
+	@$(PYTHON) -m mypy src --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs || true
+	@$(PYTHON) -m mypy modules/mazegen --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs || true
+
+lint-flake:
+	@echo "Running flake8..." 
+	@$(PYTHON) -m flake8 src --max-line-length=80 || true
+	@$(PYTHON) -m flake8 modules/mazegen --max-line-length=80 || true
+
+lint: lint-mypy lint-flake
 
 # Clean temporary files 
 clean: 
-	rm -rf $(VENV) 
+	rm -rf $(VENV)
+	rm -f modules/mazegen-1.0.tar.gz
+	rm -rf modules/mazegen
 	find . -type d -name "__pycache__" -exec rm -rf {} + 
 	find . -type d -name "*.egg-info" -exec rm -rf {} + 
 	find . -type f -name "*.pyc" -delete 
