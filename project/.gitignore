@@ -1,11 +1,14 @@
 .venv
 .env
 
+tests/
+
 # modules libs
 # minilibx
 mlx_CLXV*/
 # mazegen
-mazegen*/
+mazegen/
+modules/mazegen-1.0.tar.gz
 
 #cached python
 *__pycache__*
