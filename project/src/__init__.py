@@ -1,6 +1,3 @@
-import sys
-import os
-
 from .collect_config_variables import (ConfigParser,
                                        ConfigError)
 

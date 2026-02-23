@@ -1,22 +1,18 @@
-import mlx # Assuming your binding is in a file named mlx.py
-from src.renderer.Viewport import Viewport
-from src.renderer.Image import Image
 import sys
+
+import mlx
+
+from src.renderer.Image import Image
+from src.renderer.Viewport import Viewport
 
 
 class MlxContext:
     """Manage MLX context, windows, images, and main loop lifecycle."""
 
-    # mlx_binding == mlx.Mlx() -- wrapper instance
-    # mlxbinding.mlx == mlxbackend
-    # mlxbinding.mlx.mlx_ptr == mlx_ptr (pointer to mxl instance)
     def __init__(self, mlx_binding: mlx.Mlx) -> None:
         """Initialize MLX backend and store root mlx pointer."""
-
         try:
-            # the minilibx is instantiated
             self._mlxbinding = mlx_binding
-            # the pointer is instantiated
             self._mlx_ptr = self._mlxbinding.mlx_init()
             if not self._mlx_ptr:
                 raise RuntimeError("mlx_init() failed to return a pointer")
@@ -31,22 +27,21 @@ class MlxContext:
 
     @property
     def mlx_ptr(self) -> int:
-        return self._mlx_ptr
+        return int(self._mlx_ptr)
 
-    def get_size(self) -> tuple:
+    def get_size(self) -> tuple[int, ...]:
         """Get size of whole context surface."""
-        return self.mlxbinding.get_screen_size(self.mlx_ptr)
+        return tuple(self.mlxbinding.get_screen_size(self.mlx_ptr))
 
-    def create_new_viewport(self, w: int, h: int, title: str) -> Viewport:
+    def create_new_viewport(
+        self, w: int, h: int, title: str
+    ) -> Viewport:
         """Create and register a new MLX display surface."""
-
         viewport = Viewport()
         try:
             viewport.viewport_ptr = self.mlxbinding.mlx_new_window(
-                self.mlx_ptr,
-                w,
-                h,
-                title)
+                self.mlx_ptr, w, h, title
+            )
             viewport.height = h
             viewport.width = w
             viewport.title = title
@@ -62,12 +57,15 @@ class MlxContext:
         print(f"context: viewport {viewport.mlx_ptr} successfully created")
         return viewport
 
-    def create_new_image(self, Img_Class: type[Image], w: int, h: int) -> Image:
+    def create_new_image(
+        self, Img_Class: type[Image], w: int, h: int
+    ) -> Image:
         """Create MLX image and attach memoryview-backed buffer."""
-
         img = Img_Class()
         try:
-            img.img_ptr = self.mlxbinding.mlx_new_image(self.mlx_ptr, w, h)
+            img.img_ptr = self.mlxbinding.mlx_new_image(
+                self.mlx_ptr, w, h
+            )
             img.width = w
             img.height = h
             raw_data, img.bytes_per_pixel, img.stride, img.endian = \
@@ -81,26 +79,29 @@ class MlxContext:
             )
             sys.exit(1)
         print(f"context: image {img.img_ptr} successfully created")
-        img.set_data(raw_data)  # casting to memoryview!!!
+        img.set_data(raw_data)
         return img
 
-    def start_loop(self):
+    def start_loop(self) -> None:
         """Start MLX event loop and block until exit."""
-
         try:
             print("Starting the mlx loop...")
             self.mlxbinding.mlx_loop(self.mlx_ptr)
         except Exception as e:
-            print(f"Error: context at start loop raised: {e}", file=sys.stderr)
+            print(
+                f"Error: context at start loop raised: {e}",
+                file=sys.stderr
+            )
             sys.exit(1)
 
     def destroy_viewport(self, viewport_ptr: int) -> None:
         """Destroy MLX window associated with given pointer."""
-
         try:
             if viewport_ptr:
                 print("Destroying viewport")
-                self.mlxbinding.mlx_destroy_window(self.mlx_ptr, viewport_ptr)
+                self.mlxbinding.mlx_destroy_window(
+                    self.mlx_ptr, viewport_ptr
+                )
             else:
                 print("provide viewport pointer")
                 return
@@ -113,11 +114,12 @@ class MlxContext:
 
     def destroy_image(self, image_ptr: int) -> None:
         """Destroy MLX image associated with given pointer."""
-        
         try:
             if image_ptr:
                 print("Destroying image")
-                self.mlxbinding.mlx_destroy_image(self.mlx_ptr, image_ptr)
+                self.mlxbinding.mlx_destroy_image(
+                    self.mlx_ptr, image_ptr
+                )
             else:
                 print("provide image pointer")
                 return

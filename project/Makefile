@@ -3,7 +3,7 @@ VENV = .venv
 PYTHON = $(VENV)/bin/python3 
 PIP := $(VENV)/bin/pip 
 
-.PHONY: all install-deps install run debug lint clean 
+.PHONY: all install-deps install run debug lint clean re
 # Setup virtual environment and dependencies 
 install: $(VENV)/bin/activate install-deps 
 
@@ -40,8 +40,8 @@ lint-mypy:
 
 lint-flake:
 	@echo "Running flake8..." 
-	@$(PYTHON) -m flake8 src --max-line-length=80 || true
-	@$(PYTHON) -m flake8 modules/mazegen --max-line-length=80 || true
+	@$(PYTHON) -m flake8 src --max-line-length=79 || true
+	@$(PYTHON) -m flake8 modules/mazegen --max-line-length=79 || true
 
 lint: lint-mypy lint-flake
 
@@ -56,3 +56,7 @@ clean:
 	find . -type d -name ".mypy_cache" -exec rm -rf {} +
 	find . -type f -name "map_output.txt" -exec rm -f {} +
 	@echo "Clean complete."
+
+re:
+	make clean
+	make

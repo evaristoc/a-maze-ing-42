@@ -182,3 +182,127 @@ DestroyAll --> finish((end)):::terminator
 classDef terminator fill:#f00, color:#fff
 classDef process fill:green, color:#fff
 ```
+
+# MazeGenerator Instructions
+
+A high-level `class` that coordinates maze creation, solving, and export. It wraps the `Maze`, `builder`, and `solver` logic into a simple interface.
+
+---
+
+## Location
+
+```
+modules/mazegen/src/mazegen/generator.py
+```
+
+---
+
+## Usage
+
+```python
+from mazegen import MazeGenerator
+
+gen = MazeGenerator(width=20, height=20, seed=42)
+
+gen.generate(
+    perfect=True,
+    entry=(0, 0),
+    exit=(19, 19)
+)
+
+structure = gen.get_structure()   # 2D cell grid
+solution  = gen.get_solution()    # solved path as list of Cells
+directions = gen.get_directions() # list of (Cell, direction_str) tuples
+
+gen.save("output.map")
+```
+
+---
+
+## Constructor
+
+```python
+MazeGenerator(width=10, height=10, seed=0)
+```
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `width` | `int` | `10` | Number of columns in the maze |
+| `height` | `int` | `10` | Number of rows in the maze |
+| `seed` | `int` | `0` | RNG seed for reproducible maze generation |
+
+---
+
+## Methods
+
+### `generate(perfect, entry, exit) -> None`
+
+Builds and solves the maze. This is the main entry point — call it before any of the getters.
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `perfect` | `bool` | `True` | If `True`, generates a perfect maze (single solution path) using `SinglePathSolver`. If `False`, generates a simple maze and finds the shortest path using `ShortestPathSolver`. |
+| `entry` | `tuple` | `(0, 0)` | Coordinates of the maze entry cell `(col, row)` |
+| `exit` | `tuple` | `(0, 0)` | Coordinates of the maze exit cell `(col, row)` |
+
+Internally this method:
+1. Creates a `Maze` instance with the configured dimensions and seed
+2. Places the 42 glyph at the maze center
+3. Places entry and exit cells
+4. Generates the maze and solves it, storing the result
+
+---
+
+### `get_structure() -> Any`
+
+Returns the raw 2D cell grid (`maze.two_dimensional_cell_grid`) after generation.
+
+---
+
+### `get_solution() -> list`
+
+Returns the solution path as a list of `Cell` objects from entry to exit.
+
+---
+
+### `get_directions() -> list[tuple[Cell, str]]`
+
+Returns the solution as a list of `(Cell, direction)` pairs, excluding the entry and exit cells. Directions are cardinal strings (e.g. `"NORTH"`, `"SOUTH"`, `"EAST"`, `"WEST`).
+
+---
+
+### `save(output_file: str) -> None`
+
+Writes the maze and its solution to a hexadecimal map file.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `output_file` | `str` | Path to the output file |
+
+---
+
+## Solver behaviour
+
+| `perfect` flag | Maze type | Solver used |
+|----------------|-----------|-------------|
+| `True` | Perfect maze (no loops, one solution) | `SinglePathSolver` |
+| `False` | Simple maze (may have loops) | `ShortestPathSolver` |
+
+---
+
+## Dependencies
+
+| Module | Purpose |
+|--------|---------|
+| `mazegen.map` | Hex file writing and direction conversion |
+| `mazegen.maze_factory` | `Maze` and `Cell` types |
+| `mazegen.maze_solvers` | `SinglePathSolver`, `ShortestPathSolver` |
+
+---
+
+## Notes
+
+- All three dimensions (`width`, `height`, `seed`) must be non-zero and non-`None` for the `Maze` to be instantiated. If any are falsy the maze object is never created and subsequent calls will raise `AttributeError`.
+- `get_directions()` strips the first and last cells of the solution path (entry/exit), so the returned list covers only interior waypoints.
+- The `save()` method uses the stored `entry`, `exit`, and `solution` set during the last `generate()` call.
+

@@ -1,5 +1,5 @@
-from dataclasses import dataclass
-from typing import List, Optional, Callable
+# from dataclasses import dataclass
+from typing import Optional, Callable
 from src.renderer.MlxContext import MlxContext
 from src.renderer.Image import Image
 from src.renderer.Viewport import Viewport

@@ -3,7 +3,9 @@ from .Viewport import Viewport
 from .Image import Image, ImageBuffer
 from .RendererEngine import Renderer, MazeRenderer
 from .AppResources import AppResources
-from .hook_handlers import loop_handler, exit_loop_handler, key_handler_controller
+from .hook_handlers import (loop_handler,
+                            exit_loop_handler,
+                            key_handler_controller)
 
 __all__ = ["MlxContext",
            "Viewport",
