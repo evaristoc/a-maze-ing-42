@@ -2,10 +2,16 @@ import sys
 import mlx
 from mazegen import ExitCell, EntryCell, FourtyTwoCell
 from mazegen import MazeGenerator
-from src import (MlxContext, AppResources, ConfigError,
+from collect_config_variables.error_handlers.config_errors import (
+    ConfigError)
+from src import (MlxContext, AppResources,
                  ConfigParser, ImageBuffer, MazeRenderer)
 from src import loop_handler, exit_loop_handler, key_handler_controller
-
+from time import sleep
+from src.sound_effects_and_music import SoundManager
+import pygame  # noqa E402
+RD = "\033[91m"
+R = "\033[0m"
 
 default_options = {"MUSIC_FILE": True,
                    "COLOR_WALLS": 0xFF00AAAA,
@@ -27,6 +33,10 @@ def render_maze(params: AppResources) -> None:
         config = config.config_parser_output_into_dict(config)
     except ConfigError as error:
         print(f"Error:\t{error}")
+        sound_man = SoundManager()
+        sound_man.load_sound("bell", "sound_effects/bell_medium.mp3")
+        sound_man.play_sound("bell")
+        sleep(0.8)
         return
     maze_width = config["width"]
     maze_height = config["height"]
@@ -199,7 +209,11 @@ def main() -> None:
         config = ConfigParser.from_file(sys.argv[1])
         config = config.config_parser_output_into_dict(config)
     except ConfigError as error:
-        print(f"Error:\t{error}")
+        print(f"{RD}Error:\t{error}{R}")
+        sound_man = SoundManager()
+        sound_man.load_sound("bell_large", "sound_effects/bell_large.mp3")
+        sound_man.play_sound("bell_large")
+        sleep(0.8)
         return
     config_file = sys.argv[1]
     context = MlxContext(mlx.Mlx())
@@ -208,6 +222,9 @@ def main() -> None:
     params.update_func = render_maze
     params.config_file = config_file
     render_maze(params)
+    sound_man = SoundManager()
+    sound_man.load_music("music/de_basis_samone.mp3")
+    sound_man.play_music()
     context.start_loop()
     # current_ui_vp
     if params.ui_viewport:
@@ -215,6 +232,10 @@ def main() -> None:
     # current_vp
     if params.viewport:
         context.destroy_viewport(params.viewport.viewport_ptr)
+    sound_man.stop_music()
+    sound_man.load_sound("bell_medium", "sound_effects/bell_medium.mp3")
+    sound_man.play_sound("bell_medium")
+    sleep(1)
 
 
 if __name__ == "__main__":
