@@ -1,6 +1,6 @@
 _This project has been created as part of the 42 curriculum by swester, ecarabal_
 
-# a-maz-ing
+# a-maze-ing
 
 This project not only implement the mandatory features but also other enhacements. Between the mandatory ones are:
 
@@ -19,6 +19,8 @@ As additional enhacements, the project also offers the following features:
 - **animation of the maze** at every upload / re-load
 - **music and sound**, with a theme made by one of the authors (@SAMONEWESTER)
 - **broader range of configurable features**, eg. wall thickness, colors, cell size and more (see [config.txt](./config.txt))
+
+![image of the maze](./image.png)
 
 ## Overview
 
