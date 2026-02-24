@@ -4,23 +4,23 @@ _This project has been created as part of the 42 curriculum by swester, ecarabal
 
 This project not only implement the mandatory features but also other enhacements. Between the mandatory ones are:
 
+- a separate maze generator package from the renderer
 - reading from config.txt
-- capacity to create perfect and inperfect mazes and finding the shortest path
+- capacity to create perfect as well as imperfect mazes and finding the shortest path
 - creation of output_map.txt (maze in hex; shortest path directions; entry / exit coordinates)
 - interactions to modify:
   - wall colors
   - re-generate the maze
   - show/hide shortest path
-- a separate maze generator package from the renderer
 
 As additional enhacements, the project also offers the following features:
 
-- **full MLX rendering**, exclusively based on drawing on image buffer (no use of external images)
+- **full MLX rendering**, exclusively based on drawing on image buffer (ie. no use of external images)
 - **animation of the maze** at every upload / re-load
-- **music and sound**, with a music theme made by one of the authors (@SAMONEWESTER)
-- **broad range of configurable features**, eg. wall thickness, colors, cell size and more (see [config.txt](./config.txt))
+- **music and sound**, with a theme made by one of the authors (@SAMONEWESTER)
+- **broader range of configurable features**, eg. wall thickness, colors, cell size and more (see [config.txt](./config.txt))
 
-## Development Workflow & Definition of Done (DoD)
+## Overview
 
 This project consists of two main parts:
 
@@ -31,106 +31,6 @@ This project consists of two main parts:
    A graphical application that consumes the generator’s output, renders the maze, and enables user interaction.
 
 The generator is independent from the rendering layer, ensuring a clear separation between maze logic and graphical presentation.
-
-<<<<<<< HEAD
-
-- Development work is organized by **Epic**.
-- Each Epic must live in its own subfolder under `src/`:
-
-  ```
-  src/<epic_name>/
-  ```
-
-- Contributors should work locally and only commit code that is scoped to a single Epic per branch.
-
-#### Shared Code
-
-- A `utils/` folder is reserved for reusable functions or classes that may be used across Epics.
-- This follows a `libft`-like philosophy: shared, generic, and well-documented utilities only.
-
-#### Testing & Error Handling
-
-- Two global folders are reserved:
-
-  ```
-  tests/
-  error_handlers/
-  ```
-
-- Tests and error handlers may:
-  - Live in subfolders named after the related Epic, **or**
-  - Be clearly named to reflect the Epic or feature they belong to.
-
----
-
-### Definition of Done (DoD)
-
-A feature or Epic is **not considered complete** unless:
-
-- ✅ Tests exist for the implemented functionality
-- ✅ Error handling is implemented where applicable
-- ✅ Code is isolated to its Epic folder
-- ✅ The branch is rebased on top of `development`
-- ✅ It passes `flake8` and `mypy`
-- ✅ A Pull Request is opened and reviewed
-
-> Projects without a testing effort will **not be accepted**.
-
-Testing and error-handling practices may follow the same principles used in **Mod02 Python Piscine**. We will use `pytest` library combined with `unittest` library for testing.
-
-#### Dependency Management
-
-- Installing and using dependencies is considered part of the development workflow.
-- This may be added formally to the Definition of Done.
-
----
-
-### Git Workflow
-
-#### Branching Strategy
-
-- `development` is the main integration branch.
-- Each Epic must be developed in its **own feature branch**:
-
-  ```
-  feature/<epic-name>
-  ```
-
-#### Starting Work on an Epic
-
-1. Clone the repository fresh if no local on your computer
-2. Start _always_ **from `development`**
-3. If already working from a old local, go to `development` and do `git fetch`
-4. Create a new branch for the Epic :
-
-   ```bash
-   git checkout -b feature/<epic-name>
-   ```
-
-5. Create the Epic folder:
-
-   ```bash
-   src/<epic-name>/
-   ```
-
-6. Copy relevant source code, tests, and error handlers into the appropriate folders
-7. Commit and push the branch while you are working on it
-8. Keep the branch fresh by fetching from `development` while working on it
-9. `fetch` is **required** when the project is considered ready (see DoD above) for PR
-
-#### Keeping Your Branch Up to Date
-
-Contributors are expected to regularly sync with `development`.
-
-Before starting new work **and before pushing a branch for review**:
-
-```bash
-git fetch origin
-git rebase origin/development
-```
-
-- If conflicts occur during rebase, stop and ask for assistance.
-- # Do **not** merge `development` into your branch—**always rebase**.
 
 ## Project Structure
 
@@ -156,24 +56,12 @@ git rebase origin/development
 
 ## Main Components
 
-> > > > > > > 7ad7370de8b926d58d940636bb2dfb3998cf4157
-
 ### mazegen package
 
-<<<<<<< HEAD
-
-- Pull Requests must target the `development` branch.
-- If changes are required:
-  - **Do not push directly**
-  - Leave comments in the PR discussion
-
-- # A PR is merged only once all parties agree it is complete and meets the DoD.
 - **mazegen** is a standalone module that generates maze data structures.
 - It is independent of the visualization layer.
 
 ### a_maze_ing.py
-
-> > > > > > > 7ad7370de8b926d58d940636bb2dfb3998cf4157
 
 `a_maze_ing.py` is the **true controller of the project**.
 
@@ -185,14 +73,7 @@ More specifically, the `render_maze` function:
 - Configures and wires the different components
 - Registers the necessary hooks
 
-<<<<<<< HEAD
-
-- The Makefile is the **entry point for project setup and development**.
-- # Contributors should use the Makefile to initialize and manipulate the project.
-
-  `render_maze` runs inside a `main` function that:
-
-  > > > > > > > 7ad7370de8b926d58d940636bb2dfb3998cf4157
+`render_maze` runs inside a `main` function that:
 
 - Starts the graphical loop
 - Maintains execution
@@ -219,13 +100,7 @@ An additional abstraction layer is introduced on top of the existing wrapper to 
 - Minimizes exposure to low-level graphical calls
 - Clearly separates rendering mechanics from application logic
 
-<<<<<<< HEAD
-
-- A more advanced test is available in the same directory.
-- Changes related to MiniLibX must be discussed via PR comments.
-- # Do **not** push fixes directly unless agreed upon.
-  Core graphical primitives — **MlxContext**, **Viewport**, **Image**, and **Renderer** — are fully independent components with clearly separated responsibilities.
-  > > > > > > > 7ad7370de8b926d58d940636bb2dfb3998cf4157
+Core graphical primitives — **MlxContext**, **Viewport**, **Image**, and **Renderer** — are fully independent components with clearly separated responsibilities.
 
 The `Renderer` is a project-specific orchestration unit responsible for:
 
