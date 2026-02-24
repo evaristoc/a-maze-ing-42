@@ -1,5 +1,7 @@
 # a-maze-ing
 
+![image of the maze](./project/image.png)
+
 This project not only implement the mandatory features but also other enhacements. Between the mandatory ones are:
 
 - a separate maze generator package from the renderer
@@ -17,7 +19,5 @@ As additional enhacements, the project also offers the following features:
 - **animation of the maze** at every upload / re-load
 - **music and sound**, with a theme made by one of the authors (@SAMONEWESTER)
 - **broader range of configurable features**, eg. wall thickness, colors, cell size and more
-
-![image of the maze](./project/image.png)
 
 For more details about this project, check the [project folder](./project)
