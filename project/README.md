@@ -2,7 +2,7 @@ _This project has been created as part of the 42 curriculum by swester, ecarabal
 
 # a-maze-ing
 
-![image of the maze](./image.png)
+![image of the maze](./image.jpg)
 
 This project not only implement the mandatory features but also other enhacements. Between the mandatory ones are:
 

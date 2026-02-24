@@ -1,6 +1,6 @@
 # a-maze-ing
 
-![image of the maze](./project/image.png)
+![image of the maze](./project/image.jpg)
 
 This project not only implement the mandatory features but also other enhacements. Between the mandatory ones are:
 
