@@ -1,70 +1,64 @@
 import sys
 import mlx
-from mazegen import Maze, ExitCell, EntryCell, FourtyTwoCell
-from mazegen import (
-    write_hexadecimal_map_to_file,
-    convert_cell_path_to_directions
-)
-from mazegen import SinglePathSolver, ShortestPathSolver
-from src import MlxContext, AppResources, ConfigError, ConfigParser, ImageBuffer, MazeRenderer
+from mazegen import ExitCell, EntryCell, FourtyTwoCell
+from mazegen import MazeGenerator
+from collect_config_variables.error_handlers.config_errors import (
+    ConfigError)
+from src import (MlxContext, AppResources,
+                 ConfigParser, ImageBuffer, MazeRenderer)
 from src import loop_handler, exit_loop_handler, key_handler_controller
-
+from time import sleep
+from src.sound_effects_and_music import SoundManager
+import pygame  # noqa E402
+RD = "\033[91m"
+R = "\033[0m"
 
 default_options = {"MUSIC_FILE": True,
-                    "COLOR_WALLS": 0xFF00AAAA,
-                    "COLOR_BACKGROUND": 0xFF2200FF,
-                    "COLOR_FOURTYTWO": 0xFFFFFFFF,
-                    "COLOR_ENTRY": 0xFFFF00FF,
-                    "COLOR_EXIT": 0xFF00FF00,
-                    "COLOR_MENUTEXT": 0xFF0000,
-                    "CELL_SIZE": 60,
-                    "PERC_WALL": 0.2,
-                    "PERC_PADDING": 0.2}
+                   "COLOR_WALLS": 0xFF00AAAA,
+                   "COLOR_BACKGROUND": 0xFF2200FF,
+                   "COLOR_FOURTYTWO": 0xFFFFFFFF,
+                   "COLOR_ENTRY": 0xFFFF00FF,
+                   "COLOR_EXIT": 0xFF00FF00,
+                   "COLOR_MENUTEXT": 0xFF0000,
+                   "CELL_SIZE": 60,
+                   "PERC_WALL": 0.2,
+                   "PERC_PADDING": 0.2}
 
 
 def render_maze(params: AppResources) -> None:
-    # context, viewport, image, renderer, sol_path, update, configurationfile, ui = params
+    # context, viewport, image, renderer,
+    # sol_path, update, configurationfile, ui = params
     try:
         config = ConfigParser.from_file(params.config_file)
         config = config.config_parser_output_into_dict(config)
     except ConfigError as error:
         print(f"Error:\t{error}")
+        sound_man = SoundManager()
+        sound_man.load_sound("bell", "sound_effects/bell_medium.mp3")
+        sound_man.play_sound("bell")
+        sleep(0.8)
         return
     maze_width = config["width"]
     maze_height = config["height"]
     seed = config["seed"]
 
-    #============================================
-    #======= MazeGeneretor start ================
-    maze = Maze(maze_width, maze_height, seed)
+    # ============================================
+    # ======= MazeGenerator start ================
+    maze_generator = MazeGenerator(maze_width, maze_height, seed)
 
-    maze.place_fourty_two_glyph_at_maze_center()
-    maze.place_entry_and_exit_cells(config["entry"], config["exit"])
-    if config["perfect"] is True:
-        maze.generate_perfect_maze()
-        perfect_solver = SinglePathSolver(maze)
-        solution = perfect_solver.solve()
-    elif config["perfect"] is False:
-        maze.generate_simple_maze()
-        short_path_solver = ShortestPathSolver(maze)
-        solution = short_path_solver.solve()
+    maze_generator.generate(
+        perfect=config["perfect"],
+        entry=config["entry"],
+        exit=config["exit"]
+    )
 
-    # print(solution, len(solution))
+    maze = maze_generator.maze  # preserve original behavior
+    sol_path = maze_generator.get_directions()
 
-    for path in solution:
-        path_for_file = path
+    maze_generator.save(config["output_file"])
 
-    write_hexadecimal_map_to_file(maze, config["entry"], config["exit"],
-                                  path_for_file,
-                                  config["output_file"]
-                                  )
-
-    directions = convert_cell_path_to_directions(maze, path_for_file)
-    sol_path = [(c, d)
-                       for c, d in zip(solution[0][1:-1], directions[1:])]
-
-    #============================================
-    #======= MazeGeneretor ends =================
+    # ============================================
+    # ======= MazeGenerator ends =================
 
     if config["cell_size"]:
         cell_size = config["cell_size"]
@@ -148,7 +142,7 @@ def render_maze(params: AppResources) -> None:
                 "target": (cell for rows in maze.two_dimensional_cell_grid
                            for cell in rows),
                 "target_all": [cell for rows in maze.two_dimensional_cell_grid
-                           for cell in rows],
+                               for cell in rows],
                 "color": color_walls,
                 "on": True
             },
@@ -183,7 +177,7 @@ def render_maze(params: AppResources) -> None:
         params.ui_viewport.string_put(20, 30, color_menutext,
                                       " ---__\\.CONTROLS./__---")
         params.ui_viewport.string_put(20, 60, color_menutext,
-                                      "ESC:\tExit program".expandtabs(8))  # TODO
+                                      "ESC:\tExit program".expandtabs(8))
         params.ui_viewport.string_put(20, 90, color_menutext,
                                       "r:\tReload Maze".expandtabs(8))
         params.ui_viewport.string_put(20, 120, color_menutext,
@@ -215,7 +209,11 @@ def main() -> None:
         config = ConfigParser.from_file(sys.argv[1])
         config = config.config_parser_output_into_dict(config)
     except ConfigError as error:
-        print(f"Error:\t{error}")
+        print(f"{RD}Error:\t{error}{R}")
+        sound_man = SoundManager()
+        sound_man.load_sound("bell_large", "sound_effects/bell_large.mp3")
+        sound_man.play_sound("bell_large")
+        sleep(0.8)
         return
     config_file = sys.argv[1]
     context = MlxContext(mlx.Mlx())
@@ -224,11 +222,20 @@ def main() -> None:
     params.update_func = render_maze
     params.config_file = config_file
     render_maze(params)
+    sound_man = SoundManager()
+    sound_man.load_music("music/de_basis_samone.mp3")
+    sound_man.play_music()
     context.start_loop()
+    # current_ui_vp
     if params.ui_viewport:
-        context.destroy_viewport(params.ui_viewport.viewport_ptr)  # current ui vp
+        context.destroy_viewport(params.ui_viewport.viewport_ptr)
+    # current_vp
     if params.viewport:
-        context.destroy_viewport(params.viewport.viewport_ptr)  # current maze vp
+        context.destroy_viewport(params.viewport.viewport_ptr)
+    sound_man.stop_music()
+    sound_man.load_sound("bell_medium", "sound_effects/bell_medium.mp3")
+    sound_man.play_sound("bell_medium")
+    sleep(1)
 
 
 if __name__ == "__main__":

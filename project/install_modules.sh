@@ -4,7 +4,8 @@ set -e
 # Variables
 VENV=".venv"
 MINILIBX_DIR="modules/minilibx"
-MAZEGEN_DIR="modules/mazegen/mazegen"
+MAZEGEN_DIR="modules/mazegen"
+MAZEGEN="mazegen-1.0.tar.gz"
 TARGET_WHEEL="mlx-2.2-py3-none-manylinux1_x86_64.whl"
 TARGET_WHEEL_PATH="$MINILIBX_DIR/$TARGET_WHEEL"
 
@@ -34,7 +35,7 @@ echo "Installing Python MiniLibX wrapper..."
 
 # 4. Verify installation
 echo "Verifying MiniLibX installation..."
-if "$VENV/bin/python3" -c 'import mlx; m = mlx.Mlx(); print("Success:", m)'; then
+if "$VENV/bin/python" -c 'import mlx; m = mlx.Mlx(); print("Success:", m)'; then
     echo "MiniLibX installation verified."
 else
     echo "ERROR: MiniLibX installation failed."
@@ -44,10 +45,19 @@ fi
 echo "MiniLibX setup complete!"
 
 echo "Installing Mazegen lib..."
-"$VENV/bin/python" -m pip install -e "$MAZEGEN_DIR"
+if test -f $MAZEGEN; then
+    # echo $PWD
+    cp  $MAZEGEN modules
+    tar -xvf modules/mazegen-1.0.tar.gz -C modules
+    "$VENV/bin/python" -m pip install -e "$MAZEGEN_DIR"
+else
+    echo "unpacking failed"
+    exit 1
+fi
+
 # 4. Verify installation
 echo "Verifying Mazegen installation..."
-if "$VENV/bin/python3" -c 'import mazegen; m = mazegen.__file__; print("Success:", m)'; then
+if "$VENV/bin/python" -c 'import mazegen; m = mazegen.__file__; print("Success:", m)'; then
     echo "Mazegen installation verified."
 else
     echo "ERROR: Mazegen installation failed."

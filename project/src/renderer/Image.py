@@ -95,13 +95,14 @@ class Image:
         except Exception as e:
             print(f"Error writing pixel: {e}")
 
-    def clear(self, color: int = 0x00000000):
+    def clear(self, color: int = 0x00000000) -> None:
         """Fill the entire image buffer with a single color."""
 
         print(f"image: clearing image {self.img_ptr}")
         if self._data is not None:
             pixel_count = self.width * self.height
-            self._data[:] = (color.to_bytes(4, byteorder="little")) * pixel_count
+            self._data[:] = ((color.to_bytes(4, byteorder="little"))
+                             * pixel_count)
 
     # Casting into memoryview allows python to be closer to
     # low level by writing directly to raw memory address!!! (Gemini)

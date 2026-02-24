@@ -17,10 +17,7 @@ id_ed25519
 # caches created by dependencies.
 __pycache__
 .mypy_cache
-<<<<<<< HEAD
 
 # references
 references/
-=======
 map_output.txt
->>>>>>> 3b0cca359d2434eca94859c149571175a9442aa0

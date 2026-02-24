@@ -1,9 +1,14 @@
 .venv
 .env
 
-# external libs
+tests/
+
+# modules libs
 # minilibx
 mlx_CLXV*/
+# mazegen
+mazegen/
+modules/mazegen-1.0.tar.gz
 
 #cached python
 *__pycache__*
@@ -15,3 +20,4 @@ mlx_CLXV*/
 #created wheels
 mlx-2.2-py3-none-manylinux1_x86_64.whl
 map_output.txt
+

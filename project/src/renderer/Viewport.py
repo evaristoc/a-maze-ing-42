@@ -1,6 +1,8 @@
 import sys
-from src.renderer.Image import Image
+
 import mlx
+
+from src.renderer.Image import Image
 
 
 class Viewport:
@@ -13,14 +15,12 @@ class Viewport:
 
     def __init__(self) -> None:
         """Initialize an empty window with no MLX bindings."""
-
         self._viewportptr = 0
         self._mlx_ptr = 0
         self._height = 0
         self._width = 0
         self._title = ""
 
-    # getters
     @property
     def viewport_ptr(self) -> int:
         return self._viewportptr
@@ -58,24 +58,22 @@ class Viewport:
         return self._mlx_ptr
 
     @mlx_ptr.setter
-    def mlx_ptr(self, mlx_ptr) -> None:
+    def mlx_ptr(self, mlx_ptr: int) -> None:
         self._mlx_ptr = mlx_ptr
 
     def add_img(self, img: Image, x: int = 0, y: int = 0) -> None:
         """Blit an image buffer to the window at given coordinates."""
-
         if not img:
             raise Exception("pointers to img / context required")
         try:
             mlx.Mlx().mlx_put_image_to_window(
-                self._mlx_ptr,
-                self._viewportptr,
-                img.img_ptr,
-                x,
-                y
+                self._mlx_ptr, self._viewportptr, img.img_ptr, x, y
             )
         except Exception as e:
-            print(f"Error: viewport at add img raised: {e}", file=sys.stderr)
+            print(
+                f"Error: viewport at add img raised: {e}",
+                file=sys.stderr
+            )
             sys.exit(1)
 
     def string_put(
@@ -86,7 +84,6 @@ class Viewport:
         string: str
     ) -> None:
         """Render a text string in the window at given position."""
-
         try:
             mlx.Mlx().mlx_string_put(
                 self.mlx_ptr,
@@ -97,6 +94,9 @@ class Viewport:
                 string
             )
         except Exception as e:
-            print(f"Error: viewpot at string put raised: {e}", file=sys.stderr)
+            print(
+                f"Error: viewpot at string put raised: {e}",
+                file=sys.stderr
+            )
             return
         print("viewport: string successfully added")
