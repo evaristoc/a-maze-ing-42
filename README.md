@@ -42,7 +42,7 @@ Key learning areas include:
 - Implementing animation loops and event-driven input
 - Structuring a medium-sized, multi-module Python codebase
 
-We put care in the application of **Software Engineering best practices** beyond the common norm. In addition, reviewing the commit history and [Issues section](https://github.com/evaristoc/a-maze-ing-42/issues?q=is%3Aissue%20state%3Aclosed) provides insight into **collaborative development for small teams**, iteration cycles, debugging strategies, and team-based project organization.
+The project is mostly, but not only, made in OOP. We put care in the application of **Software Engineering best practices** beyond the common norm. In addition, reviewing the commit history and [Issues section](https://github.com/evaristoc/a-maze-ing-42/issues?q=is%3Aissue%20state%3Aclosed) provides insight into **collaborative development for small teams**, iteration cycles, debugging strategies, and team-based project organization.
 
 ## Quick Start
 
