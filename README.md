@@ -36,7 +36,7 @@ This repository can serve as a reference for students working on a 42 maze proje
 Key learning areas include:
 
 - Depth-First Search (DFS) for maze generation
-- Graph traversal and shortest-path algorithms like Breadth-Frist Search (BFS)
+- Breadth-First Search (BFS) for graph traversal and shortest-path computation
 - Pathfinding visualization techniques
 - Using MiniLibX for window management and rendering
 - Implementing animation loops and event-driven input
