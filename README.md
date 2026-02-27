@@ -1,6 +1,7 @@
 # A-Maze-ing (42 Project)
 
 ![image of the maze](./project/image.jpg)
+
 A-Maze-ing is a maze generator and solver written in Python as part of the 42 School curriculum. This project focuses on maze generation algorithms, shortest-path computation, graphical rendering with MiniLibX, and modular software design.
 
 The subject challenges students to build a fully functional maze system capable of generating, displaying, and solving perfect and imperfect mazes.
