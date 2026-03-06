@@ -76,6 +76,7 @@ class Viewport:
             )
             sys.exit(1)
 
+
     def string_put(
         self,
         start_x: int,

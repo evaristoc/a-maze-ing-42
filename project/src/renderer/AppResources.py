@@ -1,5 +1,5 @@
 # from dataclasses import dataclass
-from typing import Optional, Callable
+from typing import Optional, Callable, Dict
 from src.renderer.MlxContext import MlxContext
 from src.renderer.Image import Image
 from src.renderer.Viewport import Viewport
@@ -10,6 +10,7 @@ class AppResources:
     context: MlxContext
     viewport: Optional[Viewport] = None
     image: Optional[Image] = None
+    buttons: Optional[Dict[Image]] = None
     renderer: Optional[Renderer] = None
     update_func: Optional[Callable] = None
     config_file: str = ""

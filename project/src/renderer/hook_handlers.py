@@ -7,7 +7,7 @@ from src.renderer.AppResources import AppResources
 
 
 def loop_handler(params: list) -> None:
-    viewport, image, renderer = params
+    viewport, image, renderer, buttons = params
     anims = renderer.animations
     glob_anims = anims.get("globals")
     elem_anims = anims.get("elements")
@@ -64,6 +64,9 @@ def loop_handler(params: list) -> None:
         else:
             renderer.renderer_queue.pop(0)
     viewport.add_img(image)
+    viewport.add_img(buttons["reload"], 0, 5)
+    viewport.add_img(buttons["walls"], 0, 5)
+    viewport.add_img(buttons["path"], 0, 5)       
 
 
 def exit_loop_handler(mlx_ptr: int) -> None:

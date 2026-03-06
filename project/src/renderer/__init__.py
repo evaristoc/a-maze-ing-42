@@ -1,6 +1,6 @@
 from .MlxContext import MlxContext
 from .Viewport import Viewport
-from .Image import Image, ImageBuffer
+from .Image import Image, ImageBuffer, RasterImage
 from .RendererEngine import Renderer, MazeRenderer
 from .AppResources import AppResources
 from .hook_handlers import (loop_handler,
@@ -11,6 +11,7 @@ __all__ = ["MlxContext",
            "Viewport",
            "Image",
            "ImageBuffer",
+           "RasterImage",
            "Renderer",
            "MazeRenderer",
            "AppResources",

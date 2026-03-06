@@ -2,7 +2,7 @@ import sys
 
 import mlx
 
-from src.renderer.Image import Image
+from src.renderer.Image import Image, RasterImage
 from src.renderer.Viewport import Viewport
 
 
@@ -61,11 +61,13 @@ class MlxContext:
         self, Img_Class: type[Image], w: int, h: int
     ) -> Image:
         """Create MLX image and attach memoryview-backed buffer."""
-        img = Img_Class()
         try:
             img.img_ptr = self.mlxbinding.mlx_new_image(
                 self.mlx_ptr, w, h
             )
+            if not img.img_ptr:
+                raise Exception("Could not create image")
+            img = Img_Class()
             img.width = w
             img.height = h
             raw_data, img.bytes_per_pixel, img.stride, img.endian = \
@@ -78,9 +80,35 @@ class MlxContext:
                 file=sys.stderr
             )
             sys.exit(1)
-        print(f"context: image {img.img_ptr} successfully created")
         img.set_data(raw_data)
+        print(f"context: image {img.img_ptr} successfully created")
         return img
+
+    def load_img(
+        self,
+        asset_path: str
+    ) -> None:
+        """Add external raster images into a desired position."""        
+        try:
+             result = mlx.Mlx().mlx_png_file_to_image(
+                self.mlx_ptr,
+                asset_path                
+             )
+             if not result:
+                raise Exception("Can't create png")
+            img = RasterImage()
+            raw_data, img.bytes_per_pixel, img.stride, img.endian = \
+                self.mlxbinding.mlx_get_data_addr(img.img_ptr)
+            if not raw_data:
+                raise Exception("Can't create raster - png - data")
+        except Exception as e:
+            print(
+                f"Error: context at add raster raised: {e}",
+                file=sys.stderr
+            )
+            return
+        img.set_data(raw_data)
+        print(f"context: image {img.img_ptr} successfully created")  
 
     def start_loop(self) -> None:
         """Start MLX event loop and block until exit."""

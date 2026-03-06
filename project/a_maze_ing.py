@@ -4,7 +4,7 @@ from mazegen import ExitCell, EntryCell, FourtyTwoCell
 from mazegen import MazeGenerator
 from collect_config_variables.error_handlers.config_errors import (
     ConfigError)
-from src import (MlxContext, AppResources,
+from src import (MlxContext, AppResources, RasterImage,
                  ConfigParser, ImageBuffer, MazeRenderer)
 from src import loop_handler, exit_loop_handler, key_handler_controller
 from time import sleep
@@ -79,19 +79,30 @@ def render_maze(params: AppResources) -> None:
     img_width = ((cell_size * maze_width) - (
         (maze_width - 1) * int(cell_size * perc_wall)))
 
+    img_width = max(img_width, 110) # hardcoding legend width
+
     # important, but precalculated in advance...
     img_height = ((cell_size * maze_height) - (
         (maze_height - 1) * int(cell_size * perc_wall)))
 
+    img_height = img_height + 3 * 50 # hardcoding legend height
+
     if params.image:
         params.context.destroy_image(params.image.img_ptr)
+    if params.buttons:
+        if 'reload' in params.buttons:
+            params.context.destroy_image(params.buttons['reload'].img_ptr)
+        if 'walls' in params.buttons:
+            params.context.destroy_image(params.buttons['walls'].img_ptr)
+        if 'path' in params.buttons:
+            params.context.destroy_image(params.buttons['path'].img_ptr)
     if params.viewport:
         params.context.destroy_viewport(params.viewport.viewport_ptr)
 
     params.viewport = params.context.create_new_viewport(
         img_width,
         img_height,
-        "maze test"
+        "MAZE" # TODO: this can be dynamically changed
     )
     params.image = params.context.create_new_image(
         ImageBuffer,
@@ -221,6 +232,10 @@ def main() -> None:
     params.context = context
     params.update_func = render_maze
     params.config_file = config_file
+    if not params.buttons:
+        params.buttons["reload"] = context.load_img("./assets/reload.png")
+        params.buttons["walls"] = context.load_img("./assets/walls.png")
+        params.buttons["path"] = context.load_img("./assets/path.png")        
     render_maze(params)
     sound_man = SoundManager()
     sound_man.load_music("music/de_basis_samone.mp3")
