@@ -1,5 +1,5 @@
 import sys
-
+from typing import Optional
 import mlx
 
 from src.renderer.Image import Image, RasterImage
@@ -84,19 +84,23 @@ class MlxContext:
         print(f"context: image {img.img_ptr} successfully created")
         return img
 
-    def load_img(
+    def load_image(
         self,
         asset_path: str
-    ) -> None:
+    ) -> Optional[Image]:
         """Add external raster images into a desired position."""        
+        img = RasterImage()
         try:
-             result = mlx.Mlx().mlx_png_file_to_image(
-                self.mlx_ptr,
-                asset_path                
-             )
-             if not result:
-                raise Exception("Can't create png")
-            img = RasterImage()
+            result = self.mlxbinding.mlx_png_file_to_image(
+               self.mlx_ptr,
+               asset_path                
+            )
+            if not result:
+               raise Exception("Can't create png")
+            img_ptr, w, h = result
+            img.img_ptr = img_ptr
+            img.width = w
+            img.height = h
             raw_data, img.bytes_per_pixel, img.stride, img.endian = \
                 self.mlxbinding.mlx_get_data_addr(img.img_ptr)
             if not raw_data:
@@ -108,7 +112,8 @@ class MlxContext:
             )
             return
         img.set_data(raw_data)
-        print(f"context: image {img.img_ptr} successfully created")  
+        print(f"context: image {img.img_ptr} successfully created")
+        return img
 
     def start_loop(self) -> None:
         """Start MLX event loop and block until exit."""

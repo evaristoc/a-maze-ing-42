@@ -121,6 +121,7 @@ class ImageBuffer(Image):
     """Concrete writable image buffer owned by a render frame."""
     pass
 
+
 class RasterImage(Image):
     """Concrete writable image raster owned by a render frame."""
     pass

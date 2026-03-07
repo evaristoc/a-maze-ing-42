@@ -12,11 +12,55 @@ def loop_handler(params: list) -> None:
     glob_anims = anims.get("globals")
     elem_anims = anims.get("elements")
     if not renderer.renderer_queue:
+        # maze
         viewport.add_img(image)
+        # esc
+        viewport.add_img(buttons["esc"],
+        int((image.width - buttons["esc"].width ) / 2)
+        if image.width > buttons["esc"].width else 0,
+        image.height + 3)
+        # reload button
+        viewport.add_img(buttons["reload"],
+        int((image.width - buttons["reload"].width ) / 2)
+        if image.width > buttons["reload"].width else 0,
+        image.height + buttons["esc"].height + 2* 3)
+        # walls button
+        viewport.add_img(buttons["walls"],
+        int((image.width - buttons["walls"].width ) / 2)
+        if image.width > buttons["walls"].width else 0,
+        image.height + 2 * buttons["reload"].height + 3 * 3)
+        # path button
+        viewport.add_img(buttons["path"],
+        int((image.width - buttons["path"].width ) / 2)
+        if image.width > buttons["path"].width else 0,
+        image.height + 3 * buttons["reload"].height + 4 * 3)
+
         return
     glob_anims["frame_count"] += 1
     if glob_anims.get("frame_count") % 1 != 0:
+        # maze
         viewport.add_img(image)
+        # esc
+        viewport.add_img(buttons["esc"],
+        int((image.width - buttons["esc"].width ) / 2)
+        if image.width > buttons["esc"].width else 0,
+        image.height + 3)
+        # reload button
+        viewport.add_img(buttons["reload"],
+        int((image.width - buttons["reload"].width ) / 2)
+        if image.width > buttons["reload"].width else 0,
+        image.height + buttons["esc"].height + 2* 3)
+        # walls button
+        viewport.add_img(buttons["walls"],
+        int((image.width - buttons["walls"].width ) / 2)
+        if image.width > buttons["walls"].width else 0,
+        image.height + 2 * buttons["reload"].height + 3 * 3)
+        # path button
+        viewport.add_img(buttons["path"],
+        int((image.width - buttons["path"].width ) / 2)
+        if image.width > buttons["path"].width else 0,
+        image.height + 3 * buttons["reload"].height + 4 * 3)
+
         return
     if renderer.renderer_queue[0] == "background":
         renderer.draw(
@@ -63,10 +107,30 @@ def loop_handler(params: list) -> None:
             )
         else:
             renderer.renderer_queue.pop(0)
-    viewport.add_img(image)
-    viewport.add_img(buttons["reload"], 0, 5)
-    viewport.add_img(buttons["walls"], 0, 5)
-    viewport.add_img(buttons["path"], 0, 5)       
+        
+        # Adding images
+        # maze
+        viewport.add_img(image)
+        # esc
+        viewport.add_img(buttons["esc"],
+        int((image.width - buttons["esc"].width ) / 2)
+        if image.width > buttons["esc"].width else 0,
+        image.height + 3)
+        # reload button
+        viewport.add_img(buttons["reload"],
+        int((image.width - buttons["reload"].width ) / 2)
+        if image.width > buttons["reload"].width else 0,
+        image.height + buttons["esc"].height + 2* 3)
+        # walls button
+        viewport.add_img(buttons["walls"],
+        int((image.width - buttons["walls"].width ) / 2)
+        if image.width > buttons["walls"].width else 0,
+        image.height + 2 * buttons["reload"].height + 3 * 3)
+        # path button
+        viewport.add_img(buttons["path"],
+        int((image.width - buttons["path"].width ) / 2)
+        if image.width > buttons["path"].width else 0,
+        image.height + 3 * buttons["reload"].height + 4 * 3)
 
 
 def exit_loop_handler(mlx_ptr: int) -> None:

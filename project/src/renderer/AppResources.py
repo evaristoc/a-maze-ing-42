@@ -10,7 +10,7 @@ class AppResources:
     context: MlxContext
     viewport: Optional[Viewport] = None
     image: Optional[Image] = None
-    buttons: Optional[Dict[Image]] = None
+    buttons: Optional[Dict[str, Image]] = None
     renderer: Optional[Renderer] = None
     update_func: Optional[Callable] = None
     config_file: str = ""

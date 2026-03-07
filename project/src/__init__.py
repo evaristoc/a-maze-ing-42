@@ -6,6 +6,7 @@ from .renderer import (
     Viewport,
     Image,
     ImageBuffer,
+    RasterImage,
     Renderer,
     MazeRenderer,
     AppResources,
@@ -17,7 +18,7 @@ from .renderer import (
 from .sound_effects_and_music import SoundManager
 
 __all__ = [
-    "MlxContext", "Viewport", "Image", "ImageBuffer",
+    "MlxContext", "Viewport", "Image", "ImageBuffer", "RasterImage",
     "Renderer", "MazeRenderer", "AppResources",
     "loop_handler", "exit_loop_handler", "key_handler_controller",
     "SoundManager", "ConfigParser", "ConfigError",
