@@ -33,7 +33,7 @@ The subject challenges students to build a fully functional maze system capable 
 
 <ins>2026-04-14</ins>:
 
-The following are post-eval modifications are to be found in the https://github.com/evaristoc/a-maze-ing-42/tree/feat/buttons branch of this repository (_not PR'ed to_ `master`):
+The following post-eval modifications can be found in the https://github.com/evaristoc/a-maze-ing-42/tree/feat/buttons branch of this repository (_not PR'ed to_ `master`):
 
 - the **rendering of the path's triangles** are now completed filled for all pointing directions
 - a **demo of a legend in the same viewport as the maze** was fitted; it should show with a fixed `width x height` and centered when the width of the image is larger than the width of the legend
