@@ -29,6 +29,18 @@ The subject challenges students to build a fully functional maze system capable 
 - Extended configuration options
 - Background music and sound effects (with an authored theme made by @SAMONEWESTER)
 
+#### Changelog
+
+<ins>2026-04-14</ins>:
+
+The following are post-eval modifications are to be found in the https://github.com/evaristoc/a-maze-ing-42/tree/feat/buttons branch of this repository (_not PR'ed to_ `master`):
+
+- the **rendering of the path's triangles** are now completed filled for all pointing directions
+- a **demo of a legend in the same viewport as the maze** was fitted; it should show with a fixed `width x height` and centered when the width of the image is larger than the width of the legend
+- in the new demo legend, added a **demo for mouse clicking interactivity**: the green button next to the "**Hide / Show Path**" instruction logs "1111" on terminal when clicked with the left mouse button
+
+![amazeing corr 26-03-14](amazeing_corr_260314.jpg)
+
 ## What You Can Learn From This Project
 
 This repository can serve as a reference for students working on a 42 maze project or similar Python graphics projects.
