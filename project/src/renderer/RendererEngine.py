@@ -242,7 +242,7 @@ class MazeRenderer(Renderer):
             if y3 != y1 and min(y3, y1) <= y <= max(y3, y1):
                 x = x3 + (x1 - x3) * (y - y3) // (y1 - y3)
                 intersections.append(x)
-            if len(intersections) == 2:
+            if len(intersections) >= 2 and len(intersections) <= 3:
                 x_start = min(intersections)
                 x_end = max(intersections)
                 for x in range(x_start, x_end + 1):
