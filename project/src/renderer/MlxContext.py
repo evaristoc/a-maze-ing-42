@@ -61,13 +61,13 @@ class MlxContext:
         self, Img_Class: type[Image], w: int, h: int
     ) -> Image:
         """Create MLX image and attach memoryview-backed buffer."""
+        img = Img_Class()
         try:
             img.img_ptr = self.mlxbinding.mlx_new_image(
                 self.mlx_ptr, w, h
             )
             if not img.img_ptr:
                 raise Exception("Could not create image")
-            img = Img_Class()
             img.width = w
             img.height = h
             raw_data, img.bytes_per_pixel, img.stride, img.endian = \
