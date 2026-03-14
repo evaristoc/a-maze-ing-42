@@ -12,7 +12,8 @@ from .renderer import (
     AppResources,
     loop_handler,
     exit_loop_handler,
-    key_handler_controller
+    key_handler_controller,
+    mouse_event
 )
 
 from .sound_effects_and_music import SoundManager
@@ -22,4 +23,5 @@ __all__ = [
     "Renderer", "MazeRenderer", "AppResources",
     "loop_handler", "exit_loop_handler", "key_handler_controller",
     "SoundManager", "ConfigParser", "ConfigError",
+    "mouse_event"
     ]

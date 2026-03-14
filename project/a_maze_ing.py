@@ -6,7 +6,7 @@ from collect_config_variables.error_handlers.config_errors import (
     ConfigError)
 from src import (MlxContext, AppResources, RasterImage,
                  ConfigParser, ImageBuffer, MazeRenderer)
-from src import loop_handler, exit_loop_handler, key_handler_controller
+from src import loop_handler, exit_loop_handler, key_handler_controller, mouse_event
 from time import sleep
 from src.sound_effects_and_music import SoundManager
 import pygame  # noqa E402
@@ -194,6 +194,10 @@ def render_maze(params: AppResources) -> None:
                                        33, 0,
                                        exit_loop_handler,
                                        params.context.mlx_ptr)
+    params.context.mlxbinding.mlx_mouse_hook(params.viewport.viewport_ptr,
+                                        mouse_event,
+                                        params
+                                        )
     params.context.mlxbinding.mlx_key_hook(params.viewport.viewport_ptr,
                                            key_handler_controller,
                                            params)

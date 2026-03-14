@@ -5,7 +5,8 @@ from .RendererEngine import Renderer, MazeRenderer
 from .AppResources import AppResources
 from .hook_handlers import (loop_handler,
                             exit_loop_handler,
-                            key_handler_controller)
+                            key_handler_controller,
+                            mouse_event)
 
 __all__ = ["MlxContext",
            "Viewport",
@@ -17,5 +18,6 @@ __all__ = ["MlxContext",
            "AppResources",
            "loop_handler",
            "exit_loop_handler",
-           "key_handler_controller"
+           "key_handler_controller",
+           "mouse_event"
            ]

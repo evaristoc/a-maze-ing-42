@@ -5,6 +5,17 @@ import mlx
 
 from src.renderer.AppResources import AppResources
 
+def mouse_event(button, x, y, params) -> int:
+    print(f"Got mouse : {button} at {x}x{y}")
+    print(params.image.width, params.buttons["path"].width)
+    print(params.image.height, params.buttons["path"].height)
+    middle_green_btn_h = params.image.height + int(params.buttons["path"].height / 2)
+    middle_green_btn_w = int(params.image.width / 2) + int(params.buttons["path"].width / 2)
+    if button == 1:
+        if (x >= middle_green_btn_w - 35 and x <= middle_green_btn_w - 20) and (y <= middle_green_btn_h + 15 and y >= middle_green_btn_h - 5):
+            print(1111)
+            return 1
+        return 0
 
 def loop_handler(params: list) -> None:
     viewport, image, renderer, buttons = params
@@ -14,51 +25,50 @@ def loop_handler(params: list) -> None:
     if not renderer.renderer_queue:
         # maze
         viewport.add_img(image)
-        # esc
-        viewport.add_img(buttons["esc"],
-        int((image.width - buttons["esc"].width ) / 2)
-        if image.width > buttons["esc"].width else 0,
+        # path button
+        viewport.add_img(buttons["path"],
+        int((image.width - buttons["path"].width ) / 2)
+        if image.width > buttons["path"].width else 0,
         image.height + 3)
         # reload button
         viewport.add_img(buttons["reload"],
         int((image.width - buttons["reload"].width ) / 2)
         if image.width > buttons["reload"].width else 0,
-        image.height + buttons["esc"].height + 2* 3)
+        image.height + buttons["path"].height + 2* 3)
         # walls button
         viewport.add_img(buttons["walls"],
         int((image.width - buttons["walls"].width ) / 2)
         if image.width > buttons["walls"].width else 0,
         image.height + 2 * buttons["reload"].height + 3 * 3)
-        # path button
-        viewport.add_img(buttons["path"],
-        int((image.width - buttons["path"].width ) / 2)
-        if image.width > buttons["path"].width else 0,
+        # esc
+        viewport.add_img(buttons["esc"],
+        int((image.width - buttons["reload"].width ) / 2)
+        if image.width > buttons["reload"].width else 0,
         image.height + 3 * buttons["reload"].height + 4 * 3)
-
         return
     glob_anims["frame_count"] += 1
     if glob_anims.get("frame_count") % 1 != 0:
         # maze
         viewport.add_img(image)
-        # esc
-        viewport.add_img(buttons["esc"],
-        int((image.width - buttons["esc"].width ) / 2)
-        if image.width > buttons["esc"].width else 0,
+        # path button
+        viewport.add_img(buttons["path"],
+        int((image.width - buttons["path"].width ) / 2)
+        if image.width > buttons["path"].width else 0,
         image.height + 3)
         # reload button
         viewport.add_img(buttons["reload"],
         int((image.width - buttons["reload"].width ) / 2)
         if image.width > buttons["reload"].width else 0,
-        image.height + buttons["esc"].height + 2* 3)
+        image.height + buttons["path"].height + 2* 3)
         # walls button
         viewport.add_img(buttons["walls"],
         int((image.width - buttons["walls"].width ) / 2)
         if image.width > buttons["walls"].width else 0,
         image.height + 2 * buttons["reload"].height + 3 * 3)
-        # path button
-        viewport.add_img(buttons["path"],
-        int((image.width - buttons["path"].width ) / 2)
-        if image.width > buttons["path"].width else 0,
+        # esc
+        viewport.add_img(buttons["esc"],
+        int((image.width - buttons["reload"].width ) / 2)
+        if image.width > buttons["reload"].width else 0,
         image.height + 3 * buttons["reload"].height + 4 * 3)
 
         return
@@ -111,25 +121,25 @@ def loop_handler(params: list) -> None:
         # Adding images
         # maze
         viewport.add_img(image)
-        # esc
-        viewport.add_img(buttons["esc"],
-        int((image.width - buttons["esc"].width ) / 2)
-        if image.width > buttons["esc"].width else 0,
+        # path button
+        viewport.add_img(buttons["path"],
+        int((image.width - buttons["path"].width ) / 2)
+        if image.width > buttons["path"].width else 0,
         image.height + 3)
         # reload button
         viewport.add_img(buttons["reload"],
         int((image.width - buttons["reload"].width ) / 2)
         if image.width > buttons["reload"].width else 0,
-        image.height + buttons["esc"].height + 2* 3)
+        image.height + buttons["path"].height + 2* 3)
         # walls button
         viewport.add_img(buttons["walls"],
         int((image.width - buttons["walls"].width ) / 2)
         if image.width > buttons["walls"].width else 0,
         image.height + 2 * buttons["reload"].height + 3 * 3)
-        # path button
-        viewport.add_img(buttons["path"],
-        int((image.width - buttons["path"].width ) / 2)
-        if image.width > buttons["path"].width else 0,
+        # esc
+        viewport.add_img(buttons["esc"],
+        int((image.width - buttons["reload"].width ) / 2)
+        if image.width > buttons["reload"].width else 0,
         image.height + 3 * buttons["reload"].height + 4 * 3)
 
 
